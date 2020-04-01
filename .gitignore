@@ -3,3 +3,6 @@
 *.iws
 *.iml
 *.ipr
+/static/avatar/
+/static/file/
+/static/video/

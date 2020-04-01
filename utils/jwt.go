@@ -10,17 +10,19 @@ import (
 var jwtSecret = []byte(conf.AppConfig.JwtSecret)
 
 type Claims struct {
+	Id    uint   `json:"id"`
 	Email string `json:"email"`
-	Role  int    `json:"role"`
+	Role  uint   `json:"role"`
 	jwt.StandardClaims
 }
 
 // GenerateToken generate tokens used for auth
-func GenerateToken(email string, role int) (string, error) {
+func GenerateToken(id uint, email string, role uint) (string, error) {
 	nowTime := time.Now()
 	expireTime := nowTime.Add(6 * time.Hour)
 
 	claims := Claims{
+		id,
 		email,
 		role,
 		jwt.StandardClaims{

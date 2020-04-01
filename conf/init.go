@@ -8,9 +8,16 @@ import (
 type database struct {
 	Url string
 }
+type path struct {
+	Avatar   string
+	File     string
+	Video    string
+	Frontend string
+}
 type Config struct {
-	DB        database `toml:"database"`
 	JwtSecret string
+	DB        database `toml:"database"`
+	Path      path
 }
 
 var AppConfig Config

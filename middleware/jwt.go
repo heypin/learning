@@ -4,7 +4,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"learning/models"
 	"learning/utils"
-	"log"
 	"net/http"
 	"strings"
 )
@@ -16,19 +15,15 @@ func JWT() gin.HandlerFunc {
 			claims, err := utils.ParseToken(token)
 			if err == nil {
 				path := c.Request.URL.Path
-				log.Println("jwt ", path)
 				if (claims.Role == models.ROLE_ADMIN && strings.HasPrefix("/admin/", path)) ||
-					(claims.Role == models.ROLE_STUDENT && strings.HasPrefix("/student/", path)) ||
-					(claims.Role == models.ROLE_TEACHER && strings.HasPrefix("/teacher/", path)) {
-					log.Println(claims)
+					(claims.Role == models.ROLE_USER) {
 					c.Set("claims", claims)
 					c.Next()
 				}
 			}
 		} else {
-			c.JSON(http.StatusUnauthorized, gin.H{})
+			c.JSON(http.StatusUnauthorized, "")
 			c.Abort()
 		}
-
 	}
 }
