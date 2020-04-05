@@ -6,12 +6,12 @@ import (
 
 type User struct {
 	gorm.Model
-	Email    string
-	Password string
-	RealName string
-	Sex      uint
-	Number   string
-	Avatar   string
+	Email    string `json:"email"`
+	Password string `json:"password"`
+	RealName string `json:"realName"`
+	Sex      uint   `json:"sex"`
+	Number   string `json:"number"`
+	Avatar   string `json:"avatar"`
 }
 
 func AddUser(u User) (id uint, err error) {

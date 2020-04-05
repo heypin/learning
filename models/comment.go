@@ -6,17 +6,17 @@ import (
 
 type Comment struct {
 	gorm.Model
-	ClassId  int
-	ParentId int
-	ReplyId  int
-	UserId   int
-	Content  string
-	Children []*Comment `gorm:"foreignkey:parent_id;association_foreignkey:id;"`
+	CourseId int        `json:"courseId"`
+	ParentId int        `json:"parentId"`
+	ReplyId  int        `json:"replyId"`
+	UserId   int        `json:"userId"`
+	Content  string     `json:"content"`
+	Children []*Comment `json:"children" gorm:"foreignkey:parent_id;association_foreignkey:id;"`
 }
 
-func GetAllComment() {
+func GetAllComment() []Comment {
 	var comment []Comment
 	db.Where("parent_id IS NULL").
 		Preload("Children").Find(&comment)
-
+	return comment
 }

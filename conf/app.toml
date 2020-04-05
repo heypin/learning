@@ -3,6 +3,7 @@ jwtSecret = "1234"
 url = "root:151500@(localhost)/learning?charset=utf8mb4&parseTime=True&loc=Local"
 [path]
 avatar = "./static/avatar"
-file = "./static/file"
+file = "./static/resource"
 frontend = "./static/frontend"
 video = "./static/video"
+cover = "./static/cover"

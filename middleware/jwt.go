@@ -19,11 +19,11 @@ func JWT() gin.HandlerFunc {
 					(claims.Role == models.ROLE_USER) {
 					c.Set("claims", claims)
 					c.Next()
+					return
 				}
 			}
-		} else {
-			c.JSON(http.StatusUnauthorized, "")
-			c.Abort()
 		}
+		c.JSON(http.StatusUnauthorized, "")
+		c.Abort()
 	}
 }

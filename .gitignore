@@ -4,5 +4,6 @@
 *.iml
 *.ipr
 /static/avatar/
-/static/file/
 /static/video/
+/static/resource/
+/static/cover/

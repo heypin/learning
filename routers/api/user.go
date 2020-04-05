@@ -96,9 +96,10 @@ func UpdateUserById(c *gin.Context) {
 			var avatar string = ""
 			if file, err := c.FormFile("avatar"); err == nil {
 				u1 := uuid.Must(uuid.NewV4(), nil).String()
-				filename := conf.AppConfig.Path.Avatar + "/" + u1 + ".png"
-				if err := c.SaveUploadedFile(file, filename); err == nil {
-					avatar = u1
+				filepath := conf.AppConfig.Path.Avatar + "/" + u1 + ".png"
+				if err := c.SaveUploadedFile(file, filepath); err == nil {
+					avatar = u1 + ".png"
+					log.Println("上传头像成功")
 				}
 			} else {
 				log.Println("上传头像失败")

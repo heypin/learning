@@ -13,6 +13,7 @@ type path struct {
 	File     string
 	Video    string
 	Frontend string
+	Cover    string
 }
 type Config struct {
 	JwtSecret string
