@@ -23,12 +23,11 @@ func CreateClass(c *gin.Context) {
 				UserId:    claims.(*utils.Claims).Id,
 				ClassName: form.ClassName,
 			}
-			if _, err := s.CreateClass(); err != nil {
-				c.String(http.StatusInternalServerError, "")
-			} else {
+			if _, err := s.CreateClass(); err == nil {
 				c.String(http.StatusCreated, "")
+				return
 			}
 		}
+		c.String(http.StatusInternalServerError, "")
 	}
-
 }

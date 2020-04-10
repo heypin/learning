@@ -76,8 +76,10 @@ func GetUserByToken(c *gin.Context) {
 				"sex":      user.Sex,
 				"number":   user.Number,
 			})
+			return
 		}
 	}
+	c.String(http.StatusInternalServerError, "")
 }
 
 type UserUpdateForm struct {
@@ -116,13 +118,10 @@ func UpdateUserById(c *gin.Context) {
 				c.JSON(http.StatusOK, gin.H{
 					"avatar": avatar,
 				})
-			} else {
-				c.JSON(http.StatusInternalServerError, gin.H{
-					"err": "更新失败",
-				})
+				return
 			}
 		}
-
+		c.String(http.StatusInternalServerError, "")
 	}
 }
 
@@ -143,11 +142,9 @@ func UpdateUserPassword(c *gin.Context) {
 			}
 			if err := s.UpdateUserPassword(form.OldPassword); err == nil {
 				c.String(http.StatusOK, "")
-			} else {
-				c.String(http.StatusInternalServerError, "")
+				return
 			}
-		} else {
-			c.String(http.StatusInternalServerError, "")
 		}
+		c.String(http.StatusInternalServerError, "")
 	}
 }

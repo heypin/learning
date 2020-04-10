@@ -20,7 +20,7 @@ func AddCourse(c Course) (id uint, err error) {
 func GetCourseByUserId(id uint) ([]*Course, error) {
 	var c []*Course
 	err := db.Where("user_id = ?", id).Find(&c).Error
-	if err != nil {
+	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, err
 	}
 	return c, nil

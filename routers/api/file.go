@@ -15,13 +15,13 @@ import (
 	"strings"
 )
 
-type CreateFileForm struct {
+type FileForm struct {
 	CourseId uint `form:"courseId" binding:"required" `
 	ParentId uint `form:"parentId"  `
 }
 
 func GetChildFile(c *gin.Context) {
-	var form CreateFileForm
+	var form FileForm
 	if err := c.ShouldBindQuery(&form); err != nil {
 		c.String(http.StatusBadRequest, "")
 	} else {
@@ -38,13 +38,14 @@ func GetChildFile(c *gin.Context) {
 
 }
 func CreateFile(c *gin.Context) {
-	var form CreateFileForm
+	var form FileForm
 	if err := c.ShouldBind(&form); err != nil {
 		c.String(http.StatusBadRequest, "")
 	} else {
 		if claims, ok := c.Get("claims"); ok {
 			multiForm, err := c.MultipartForm()
 			if err != nil {
+				c.String(http.StatusBadRequest, "")
 				log.Println("未获取到文件")
 				return
 			}
@@ -89,7 +90,6 @@ func CreateFile(c *gin.Context) {
 
 			}
 			c.JSON(http.StatusCreated, gin.H{})
-
 		}
 	}
 }
@@ -120,9 +120,7 @@ func CreateFolder(c *gin.Context) {
 					s.LocalFilepath = f.LocalFilepath + "/" + strconv.Itoa(int(f.ID))
 				}
 			}
-			if id, err := s.AddFile(); err != nil {
-				c.String(http.StatusInternalServerError, "")
-			} else {
+			if id, err := s.AddFile(); err == nil {
 				var directory string = conf.AppConfig.Path.File +
 					s.LocalFilepath + "/" + strconv.Itoa(int(id))
 				err = os.MkdirAll(directory, os.ModePerm)
@@ -130,8 +128,10 @@ func CreateFolder(c *gin.Context) {
 					log.Println("创建目录失败", err)
 				}
 				c.String(http.StatusCreated, "")
+				return
 			}
 		}
+		c.String(http.StatusInternalServerError, "")
 	}
 }
 func DownloadFile(c *gin.Context) {
@@ -144,7 +144,7 @@ func DownloadFile(c *gin.Context) {
 		Id: uint(id),
 	}
 	file, err := s.GetFileById()
-	if err != nil {
+	if err != nil || file == nil {
 		c.String(http.StatusInternalServerError, "")
 		return
 	}

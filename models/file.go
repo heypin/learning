@@ -20,8 +20,9 @@ func AddFile(f File) (id uint, err error) {
 	return f.ID, nil
 }
 func GetChildFileByCourseId(courseId uint, parentId uint) (f []*File, err error) {
-	if err = db.Where("course_id = ?", courseId).
-		Where("parent_id = ?", parentId).Find(&f).Error; err != nil {
+	err = db.Where("course_id = ?", courseId).
+		Where("parent_id = ?", parentId).Find(&f).Error
+	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, err
 	}
 	return f, nil
@@ -29,7 +30,7 @@ func GetChildFileByCourseId(courseId uint, parentId uint) (f []*File, err error)
 func GetFileById(id uint) (*File, error) {
 	var f File
 	err := db.Where("id = ?", id).First(&f).Error
-	if err != nil {
+	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, err
 	}
 	return &f, nil

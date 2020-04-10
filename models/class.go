@@ -25,7 +25,7 @@ func UpdateClassById(c Class) (err error) {
 func GetClassByCourseId(id uint) ([]*Class, error) {
 	var c []*Class
 	err := db.Where("course_id = ?", id).Find(&c).Error
-	if err != nil {
+	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, err
 	}
 	return c, nil

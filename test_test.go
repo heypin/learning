@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"learning/conf"
 	"learning/models"
-	"strings"
 	"testing"
 )
 
@@ -17,6 +16,5 @@ func TestMy(t *testing.T) {
 func TestCasbin(t *testing.T) {
 	//authEnforcer, err := casbin.NewEnforcer("./auth_model.conf", "./policy.csv")
 	//authEnforcer.LoadPolicy()
-	str := strings.Split("", ".")
-	fmt.Println(len(str))
+
 }

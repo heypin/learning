@@ -46,12 +46,10 @@ func AddCourse(c *gin.Context) {
 				c.JSON(http.StatusOK, gin.H{
 					"cover": cover,
 				})
-			} else {
-				c.JSON(http.StatusInternalServerError, gin.H{
-					"err": "更新失败",
-				})
+				return
 			}
 		}
+		c.String(http.StatusInternalServerError, "")
 	}
 }
 func GetTeachCourse(c *gin.Context) {
@@ -61,8 +59,8 @@ func GetTeachCourse(c *gin.Context) {
 		}
 		if courses, err := s.GetCourseByUserId(); err == nil {
 			c.JSON(http.StatusOK, courses)
-		} else {
-			c.String(http.StatusInternalServerError, "")
+			return
 		}
 	}
+	c.String(http.StatusInternalServerError, "")
 }
