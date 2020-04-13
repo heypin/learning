@@ -43,6 +43,17 @@ func InitRouters() *gin.Engine {
 		auth.DELETE("chapter/video", api.DeleteChapterVideoById)
 		auth.PUT("chapter/video", api.UpdateChapterVideo)
 
+		auth.GET("notify", api.GetNotifyByCourseId)
+		auth.POST("notify", api.CreateNotify)
+		auth.PUT("notify", api.UpdateNotifyById)
+		auth.DELETE("notify", api.DeleteNotifyById)
+
+		auth.GET("comment", api.GetCommentByCourseId)
+		auth.GET("comment/user", api.GetCommentByUserId)
+		auth.GET("comment/reply", api.GetCommentReplyToUser)
+		auth.POST("comment", api.CreateComment)
+		auth.DELETE("comment", api.DeleteCommentById)
+
 	}
 	return r
 }

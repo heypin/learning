@@ -19,7 +19,7 @@ type Claims struct {
 // GenerateToken generate tokens used for auth
 func GenerateToken(id uint, email string, role uint) (string, error) {
 	nowTime := time.Now()
-	expireTime := nowTime.Add(6 * time.Hour)
+	expireTime := nowTime.Add(48 * time.Hour)
 
 	claims := Claims{
 		id,
