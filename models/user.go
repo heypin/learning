@@ -6,12 +6,13 @@ import (
 
 type User struct {
 	gorm.Model
-	Email    string `json:"email"`
-	Password string `json:"password"`
-	RealName string `json:"realName"`
-	Sex      uint   `json:"sex"`
-	Number   string `json:"number"`
-	Avatar   string `json:"avatar"`
+	Email    string   `json:"email"`
+	Password string   `json:"-"`
+	RealName string   `json:"realName"`
+	Sex      uint     `json:"sex"`
+	Number   string   `json:"number"`
+	Avatar   string   `json:"avatar"`
+	Classes  []*Class `json:"-" gorm:"many2many:class_member;"`
 }
 
 func AddUser(u User) (id uint, err error) {
@@ -26,6 +27,9 @@ func GetUserByEmail(email string) (*User, error) {
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, err
 	}
+	if err == gorm.ErrRecordNotFound {
+		return nil, nil
+	}
 	return &u, nil
 }
 func GetUserById(id uint) (*User, error) {
@@ -33,6 +37,9 @@ func GetUserById(id uint) (*User, error) {
 	err := db.Where("id = ?", id).First(&u).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, err
+	}
+	if err == gorm.ErrRecordNotFound {
+		return nil, nil
 	}
 	return &u, nil
 }

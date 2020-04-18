@@ -33,6 +33,9 @@ func GetFileById(id uint) (*File, error) {
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, err
 	}
+	if err == gorm.ErrRecordNotFound {
+		return nil, nil
+	}
 	return &f, nil
 }
 func UpdateFileById(f File) (err error) {

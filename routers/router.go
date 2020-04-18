@@ -26,8 +26,9 @@ func InitRouters() *gin.Engine {
 		auth.PUT("user/password", api.UpdateUserPassword)
 
 		auth.POST("course", api.AddCourse)
-		auth.GET("course/teach", api.GetTeachCourse)
+		auth.GET("course/teach", api.GetUserTeachCourse)
 
+		auth.GET("class", api.GetClassByCourseId)
 		auth.POST("class", api.CreateClass)
 
 		auth.GET("file/children", api.GetChildFile)
@@ -54,6 +55,14 @@ func InitRouters() *gin.Engine {
 		auth.POST("comment", api.CreateComment)
 		auth.DELETE("comment", api.DeleteCommentById)
 
+		auth.GET("classMember/user", api.GetUsersByClassId)
+		auth.GET("classMember/class", api.GetClassesByUserId)
+		auth.POST("classMember/join", api.JoinClassByClassCode)
+		auth.DELETE("classMember", api.DeleteClassMember)
+
+		auth.GET("homeworkLib", api.GetHomeworkLibsByCourseId)
+		auth.PUT("homeworkLib", api.UpdateHomeworkLibById)
+		auth.POST("homeworkLib", api.CreateHomeworkLib)
 	}
 	return r
 }

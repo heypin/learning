@@ -30,6 +30,9 @@ func GetChapterById(id uint) (*Chapter, error) {
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, err
 	}
+	if err == gorm.ErrRecordNotFound {
+		return nil, nil
+	}
 	return &c, nil
 }
 func DeleteChapterById(id uint) (err error) {

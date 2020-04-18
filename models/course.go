@@ -25,6 +25,7 @@ func GetCourseByUserId(id uint) ([]*Course, error) {
 	}
 	return c, nil
 }
+
 func DeleteCourseById(id uint) (err error) {
 	if err = db.Where("id = ?", id).Delete(&Course{}).Error; err != nil {
 		return err

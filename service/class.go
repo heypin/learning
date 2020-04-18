@@ -7,9 +7,9 @@ import (
 )
 
 type ClassService struct {
-	Id        uint
-	CourseId  uint
-	UserId    uint
+	Id       uint
+	CourseId uint
+	//UserId    uint
 	ClassName string
 	ClassCode string
 }
@@ -17,7 +17,6 @@ type ClassService struct {
 func (s *ClassService) CreateClass() (id uint, err error) {
 	class := models.Class{
 		CourseId:  s.CourseId,
-		UserId:    s.UserId,
 		ClassName: s.ClassName,
 	}
 	if id, err = models.AddClass(class); err != nil {
@@ -31,4 +30,8 @@ func (s *ClassService) CreateClass() (id uint, err error) {
 		return 0, err
 	}
 	return id, nil
+}
+func (s *ClassService) GetClassByCourseId() (c []*models.Class, err error) {
+	c, err = models.GetClassByCourseId(s.CourseId)
+	return
 }

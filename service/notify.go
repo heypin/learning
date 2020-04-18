@@ -29,11 +29,9 @@ func (s *NotifyService) GetNotifyByCourseId() (n []*models.Notify, err error) {
 }
 func (s *NotifyService) UpdateNotifyById() (err error) {
 	n := models.Notify{
-		Model:    gorm.Model{ID: s.Id},
-		UserId:   s.UserId,
-		CourseId: s.CourseId,
-		Title:    s.Title,
-		Content:  s.Content,
+		Model:   gorm.Model{ID: s.Id},
+		Title:   s.Title,
+		Content: s.Content,
 	}
 	err = models.UpdateNotifyById(n)
 	return

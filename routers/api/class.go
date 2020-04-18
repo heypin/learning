@@ -3,8 +3,8 @@ package api
 import (
 	"github.com/gin-gonic/gin"
 	"learning/service"
-	"learning/utils"
 	"net/http"
+	"strconv"
 )
 
 type CreateClassForm struct {
@@ -16,18 +16,31 @@ func CreateClass(c *gin.Context) {
 	var form CreateClassForm
 	if err := c.ShouldBind(&form); err != nil {
 		c.String(http.StatusBadRequest, "")
+		return
+	}
+	s := service.ClassService{
+		CourseId:  form.CourseId,
+		ClassName: form.ClassName,
+	}
+	if _, err := s.CreateClass(); err == nil {
+		c.String(http.StatusCreated, "")
+		return
+	}
+	c.String(http.StatusInternalServerError, "")
+
+}
+func GetClassByCourseId(c *gin.Context) {
+	courseId, err := strconv.Atoi(c.Query("courseId"))
+	if err != nil || courseId <= 0 {
+		c.String(http.StatusBadRequest, "")
+		return
+	}
+	s := service.ClassService{
+		CourseId: uint(courseId),
+	}
+	if classes, err := s.GetClassByCourseId(); err == nil {
+		c.JSON(http.StatusOK, classes)
 	} else {
-		if claims, ok := c.Get("claims"); ok {
-			s := service.ClassService{
-				CourseId:  form.CourseId,
-				UserId:    claims.(*utils.Claims).Id,
-				ClassName: form.ClassName,
-			}
-			if _, err := s.CreateClass(); err == nil {
-				c.String(http.StatusCreated, "")
-				return
-			}
-		}
 		c.String(http.StatusInternalServerError, "")
 	}
 }

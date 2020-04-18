@@ -52,7 +52,7 @@ func AddCourse(c *gin.Context) {
 		c.String(http.StatusInternalServerError, "")
 	}
 }
-func GetTeachCourse(c *gin.Context) {
+func GetUserTeachCourse(c *gin.Context) {
 	if claims, ok := c.Get("claims"); ok {
 		s := service.CourseService{
 			UserId: claims.(*utils.Claims).Id,
