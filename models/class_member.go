@@ -31,7 +31,7 @@ func GetClassesByUserId(userId uint) (classes []*Class, err error) {
 
 func HasJoinClass(userId uint, classId uint) (bool, error) {
 	var classMember ClassMember
-	err := db.Where("user_id = ? AND class_id = ?", userId, classId).Find(&classMember).Error
+	err := db.Where("user_id = ? AND class_id = ?", userId, classId).First(&classMember).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return false, err
 	} else if err == gorm.ErrRecordNotFound {

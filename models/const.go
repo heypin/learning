@@ -1,5 +1,9 @@
 package models
 
+import "errors"
+
+var ErrRecordExist = errors.New("记录已存在")
+
 const (
 	ROLE_ADMIN = iota
 	ROLE_USER

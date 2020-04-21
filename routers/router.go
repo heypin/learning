@@ -17,6 +17,7 @@ func InitRouters() *gin.Engine {
 	r.POST("/login", api.UserLogin)
 	r.POST("/register", api.UserRegister)
 	r.GET("/video/:name", api.PlayVideo)
+	r.POST("/compile", api.ExecuteProgram)
 	r.MaxMultipartMemory = 500 << 20 //500MB
 	auth := r.Group("/")
 	auth.Use(middleware.JWT())
@@ -61,8 +62,24 @@ func InitRouters() *gin.Engine {
 		auth.DELETE("classMember", api.DeleteClassMember)
 
 		auth.GET("homeworkLib", api.GetHomeworkLibsByCourseId)
-		auth.PUT("homeworkLib", api.UpdateHomeworkLibById)
+		auth.GET("homeworkLib/items", api.GetHomeworkLibWithItemsById)
+		auth.PUT("homeworkLib/name", api.UpdateHomeworkLibNameById)
 		auth.POST("homeworkLib", api.CreateHomeworkLib)
+
+		auth.GET("homeworkLibItem", api.GetHomeworkLibItemsByLibId)
+		auth.PUT("homeworkLibItem", api.UpdateHomeworkLibItemAndOptions)
+		auth.POST("homeworkLibItem", api.CreateHomeworkLibItemAndOptions)
+		auth.DELETE("homeworkLibItem", api.DeleteHomeworkLibItemById)
+
+		auth.GET("homeworkPublish", api.GetHomeworkPublishesByClassId)
+		auth.GET("homeworkPublish/submit", api.GetHomeworkPublishesWithSubmitByClassId)
+		auth.POST("homeworkPublish", api.PublishHomework)
+		auth.PUT("homeworkPublish", api.UpdateHomeworkPublishById)
+
+		auth.GET("homeworkSubmit", api.GetHomeworkSubmitsByPublishId)
+		auth.GET("homeworkSubmit/user", api.GetHomeworkSubmitWithItems)
+		auth.POST("homeworkSubmit", api.SubmitHomeworkWithItems)
+
 	}
 	return r
 }

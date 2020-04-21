@@ -4,10 +4,11 @@ import "github.com/jinzhu/gorm"
 
 type HomeworkLib struct {
 	gorm.Model
-	CourseId     uint   `json:"courseId"`
-	Name         string `json:"name"`
-	SubjectCount uint   `json:"subjectCount"`
-	TotalScore   uint   `json:"totalScore"`
+	CourseId     uint               `json:"courseId"`
+	Name         string             `json:"name"`
+	SubjectCount uint               `json:"subjectCount"`
+	TotalScore   uint               `json:"totalScore"`
+	Items        []*HomeworkLibItem `json:"items" gorm:"foreignKey:homework_lib_id;association_foreignKey:id;"`
 }
 
 func AddHomeworkLib(h HomeworkLib) (id uint, err error) {
@@ -22,9 +23,12 @@ func UpdateHomeworkLibById(h HomeworkLib) error {
 	}
 	return nil
 }
-func GetHomeworkLibById(id uint) (*HomeworkLib, error) {
+
+//获取作业库及其库中的题和每到题
+func GetHomeworkLibWithItemsById(id uint) (*HomeworkLib, error) {
 	var lib HomeworkLib
-	err := db.Where("id = ?", id).First(&lib).Error
+	err := db.Where("id = ?", id).Preload("Items").
+		Preload("Items.Options").First(&lib).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, err
 	}

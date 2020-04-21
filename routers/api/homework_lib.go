@@ -34,7 +34,7 @@ type UpdateHomeworkLibForm struct {
 	Name string `form:"name"`
 }
 
-func UpdateHomeworkLibById(c *gin.Context) {
+func UpdateHomeworkLibNameById(c *gin.Context) {
 	var form UpdateHomeworkLibForm
 	if err := c.ShouldBind(&form); err != nil {
 		c.String(http.StatusBadRequest, "")
@@ -62,6 +62,24 @@ func GetHomeworkLibsByCourseId(c *gin.Context) {
 	}
 	if libs, err := s.GetHomeworkLibsByCourseId(); err == nil {
 		c.JSON(http.StatusOK, libs)
+	} else {
+		c.String(http.StatusInternalServerError, "")
+	}
+}
+func GetHomeworkLibWithItemsById(c *gin.Context) {
+	id, err := strconv.Atoi(c.Query("id"))
+	if err != nil || id <= 0 {
+		c.String(http.StatusBadRequest, "")
+		return
+	}
+	s := service.HomeworkLibService{
+		Id: uint(id),
+	}
+	if lib, err := s.GetHomeworkLibWithItemsById(); err == nil {
+		for _, v := range lib.Items { //获取作业题目信息时不把正确答案返回
+			v.Answer = ""
+		}
+		c.JSON(http.StatusOK, lib)
 	} else {
 		c.String(http.StatusInternalServerError, "")
 	}

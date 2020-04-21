@@ -15,9 +15,13 @@ require (
 	github.com/mattn/go-isatty v0.0.12 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.1 // indirect
+	github.com/robertkrimen/otto v0.0.0-20191219234010-c382bd3c16ff
 	github.com/satori/go.uuid v1.2.0
+	github.com/tidwall/gjson v1.6.0
+	github.com/tidwall/pretty v1.0.1 // indirect
 	golang.org/x/crypto v0.0.0-20200317142112-1b76d66859c6
 	golang.org/x/sys v0.0.0-20200301025734-6b2465a0221e // indirect
 	gopkg.in/go-playground/validator.v9 v9.31.0 // indirect
+	gopkg.in/sourcemap.v1 v1.0.5 // indirect
 	gopkg.in/yaml.v2 v2.2.8 // indirect
 )

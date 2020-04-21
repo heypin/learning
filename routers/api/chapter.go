@@ -10,21 +10,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
-	"time"
 )
-
-func PlayVideo(c *gin.Context) {
-	videoName := c.Param("name")
-	localPath := conf.AppConfig.Path.Video + "/" + videoName
-	video, err := os.Open(localPath)
-	if err != nil {
-		c.String(http.StatusInternalServerError, "")
-		return
-	}
-	c.Header("Content-Type", "video/mp4")
-	http.ServeContent(c.Writer, c.Request, "", time.Now(), video)
-	defer video.Close()
-}
 
 type CreateChapterForm struct {
 	CourseId    uint   `form:"courseId" binding:"required" `

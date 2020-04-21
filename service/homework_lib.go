@@ -31,8 +31,8 @@ func (s *HomeworkLibService) UpdateHomeworkLibById() (err error) {
 	err = models.UpdateHomeworkLibById(homeworkLib)
 	return
 }
-func (s *HomeworkLibService) GetHomeworkLibById() (lib *models.HomeworkLib, err error) {
-	lib, err = models.GetHomeworkLibById(s.Id)
+func (s *HomeworkLibService) GetHomeworkLibWithItemsById() (lib *models.HomeworkLib, err error) {
+	lib, err = models.GetHomeworkLibWithItemsById(s.Id)
 	return
 }
 func (s *HomeworkLibService) GetHomeworkLibsByCourseId() (libs []*models.HomeworkLib, err error) {
