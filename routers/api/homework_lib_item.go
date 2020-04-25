@@ -55,13 +55,12 @@ func CreateHomeworkLibItemAndOptions(c *gin.Context) {
 }
 
 type UpdateLibItemForm struct {
-	Id            uint     `form:"id" binding:"required"`
-	HomeworkLibId uint     `form:"homeworkLibItemId" binding:"required"`
-	Type          string   `form:"type" binding:"required"`
-	Question      string   `form:"question" binding:"required"`
-	Answer        string   `form:"answer" binding:"required"`
-	Score         uint     `form:"score" binding:"required"`
-	Options       []Option `form:"options" `
+	Id       uint     `form:"id" binding:"required"`
+	Type     string   `form:"type" binding:"required"`
+	Question string   `form:"question" binding:"required"`
+	Answer   string   `form:"answer" binding:"required"`
+	Score    uint     `form:"score" binding:"required"`
+	Options  []Option `form:"options" `
 }
 
 func UpdateHomeworkLibItemAndOptions(c *gin.Context) {
@@ -82,13 +81,12 @@ func UpdateHomeworkLibItemAndOptions(c *gin.Context) {
 		}
 	}
 	s := service.HomeworkLibItemService{
-		Id:            form.Id,
-		HomeworkLibId: form.HomeworkLibId,
-		Type:          form.Type,
-		Question:      form.Question,
-		Answer:        form.Answer,
-		Score:         form.Score,
-		Options:       options,
+		Id:       form.Id,
+		Type:     form.Type,
+		Question: form.Question,
+		Answer:   form.Answer,
+		Score:    form.Score,
+		Options:  options,
 	}
 	if err := s.UpdateLibItemAndOptions(); err == nil {
 		c.String(http.StatusOK, "")

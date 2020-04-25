@@ -23,6 +23,7 @@ func GetUsersByClassId(c *gin.Context) {
 		c.String(http.StatusInternalServerError, "")
 	}
 }
+
 func GetClassesByUserId(c *gin.Context) {
 	if claims, ok := c.Get("claims"); ok {
 		s := service.ClassMemberService{
@@ -55,21 +56,30 @@ func JoinClassByClassCode(c *gin.Context) {
 	}
 	c.String(http.StatusInternalServerError, "")
 }
+
+type ClassMemberForm struct {
+	ClassId uint `form:"classId" binding:"required"`
+	UserId  uint `form:"userId" binding:"userId"`
+}
+
 func DeleteClassMember(c *gin.Context) {
 	classId, err := strconv.Atoi(c.Query("classId"))
 	if err != nil || classId <= 0 {
 		c.String(http.StatusBadRequest, "")
 		return
 	}
-	if claims, ok := c.Get("claims"); ok {
-		s := service.ClassMemberService{
-			UserId:  claims.(*utils.Claims).Id,
-			ClassId: uint(classId),
-		}
-		if err := s.DeleteClassMember(); err == nil {
-			c.String(http.StatusOK, "")
-			return
-		}
+	userId, err := strconv.Atoi(c.Query("userId"))
+	if err != nil || userId <= 0 {
+		c.String(http.StatusBadRequest, "")
+		return
 	}
-	c.String(http.StatusInternalServerError, "")
+	s := service.ClassMemberService{
+		UserId:  uint(userId),
+		ClassId: uint(classId),
+	}
+	if err := s.DeleteClassMember(); err == nil {
+		c.String(http.StatusOK, "")
+	} else {
+		c.String(http.StatusInternalServerError, "")
+	}
 }

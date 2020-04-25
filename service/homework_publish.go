@@ -35,9 +35,8 @@ func (s *HomeworkPublishService) PublishHomework() (uint, error) {
 		return 0, err
 	}
 }
-func (s *HomeworkPublishService) IsAllowResubmitHomework() (bool, error) {
-	ok, err := models.IsAllowResubmitHomework(s.Id)
-	return ok, err
+func (s *HomeworkPublishService) GetHomeworkPublishById() (publish *models.HomeworkPublish, err error) {
+	return models.GetHomeworkPublishById(s.Id)
 }
 func (s *HomeworkPublishService) UpdateHomeworkPublishById() (err error) {
 	publish := models.HomeworkPublish{
@@ -51,7 +50,15 @@ func (s *HomeworkPublishService) UpdateHomeworkPublishById() (err error) {
 }
 func (s *HomeworkPublishService) GetHomeworkPublishesByClassId() (publishes []*models.HomeworkPublish, err error) {
 	publishes, err = models.GetHomeworkPublishesByClassId(s.ClassId)
-	return
+	if err != nil {
+		return publishes, err
+	} else {
+		for _, v := range publishes {
+			v.SubmitCount, _ = models.GetHomeworkSubmitCountByPublishId(v.ID)
+			v.UnMarkCount, _ = models.GetHomeworkUnmarkedCountByPublishId(v.ID)
+		}
+		return publishes, nil
+	}
 }
 func (s *HomeworkPublishService) GetHomeworkPublishesWithSubmitByClassId(userId uint) (publishes []*models.HomeworkPublish, err error) {
 	publishes, err = models.GetHomeworkPublishesWithSubmitByClassId(s.ClassId, userId)

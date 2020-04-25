@@ -71,14 +71,42 @@ func InitRouters() *gin.Engine {
 		auth.POST("homeworkLibItem", api.CreateHomeworkLibItemAndOptions)
 		auth.DELETE("homeworkLibItem", api.DeleteHomeworkLibItemById)
 
-		auth.GET("homeworkPublish", api.GetHomeworkPublishesByClassId)
+		auth.GET("homeworkPublish", api.GetHomeworkPublishById)
+		auth.GET("homeworkPublish/class", api.GetHomeworkPublishesByClassId)
 		auth.GET("homeworkPublish/submit", api.GetHomeworkPublishesWithSubmitByClassId)
 		auth.POST("homeworkPublish", api.PublishHomework)
 		auth.PUT("homeworkPublish", api.UpdateHomeworkPublishById)
 
-		auth.GET("homeworkSubmit", api.GetHomeworkSubmitsByPublishId)
-		auth.GET("homeworkSubmit/user", api.GetHomeworkSubmitWithItems)
+		auth.GET("homeworkSubmit", api.GetHomeworkSubmitById)
+		auth.GET("homeworkSubmit/publish", api.GetHomeworkSubmitsByPublishId)
+		auth.GET("homeworkSubmit/user", api.GetHomeworkUserSubmitWithItems)
 		auth.POST("homeworkSubmit", api.SubmitHomeworkWithItems)
+		auth.PUT("homeworkSubmit/mark", api.UpdateHomeworkSubmitMarkById)
+		auth.PUT("homeworkSubmit/score", api.UpdateHomeworkSubmitItemsScore)
+
+		auth.GET("examLib", api.GetExamLibsByCourseId)
+		auth.GET("examLib/items", api.GetExamLibWithItemsById)
+		auth.PUT("examLib/name", api.UpdateExamLibNameById)
+		auth.POST("examLib", api.CreateExamLib)
+
+		auth.GET("examLibItem", api.GetExamLibItemsByLibId)
+		auth.PUT("examLibItem", api.UpdateExamLibItemAndOptions)
+		auth.POST("examLibItem", api.CreateExamLibItemAndOptions)
+		auth.DELETE("examLibItem", api.DeleteExamLibItemById)
+
+		auth.GET("examPublish", api.GetExamPublishById)
+		auth.GET("examPublish/class", api.GetExamPublishesByClassId)
+		auth.GET("examPublish/submit", api.GetExamPublishesWithSubmitByClassId)
+		auth.POST("examPublish", api.PublishExam)
+		auth.PUT("examPublish", api.UpdateExamPublishById)
+
+		auth.GET("examSubmit", api.GetExamSubmitById)
+		auth.GET("examSubmit/publish", api.GetExamSubmitsByPublishId)
+		auth.GET("examSubmit/user", api.GetExamUserSubmitWithItems)
+		auth.POST("examSubmit/item", api.SubmitExamItem)
+		auth.POST("examSubmit/start", api.StartExam)
+		auth.PUT("examSubmit/finish", api.FinishExam)
+		auth.PUT("examSubmit/score", api.UpdateExamSubmitItemsScore)
 
 	}
 	return r
