@@ -11,7 +11,7 @@ type ExamSubmit struct {
 	ExamPublishId uint              `json:"examPublishId"`
 	TotalScore    uint              `json:"totalScore"`
 	StartTime     time.Time         `json:"startTime"`
-	FinishTime    time.Time         `json:"finishTime"`
+	FinishTime    *time.Time        `json:"finishTime"`
 	Mark          *uint             `json:"mark"`
 	SubmitItems   []*ExamSubmitItem `json:"submitItems" gorm:"foreignKey:exam_submit_id;association_foreignKey:id;"`
 	User          User              `json:"user" gorm:"foreignKey:id;association_foreignKey:user_id;"`
@@ -118,7 +118,7 @@ func UpdateExamSubmitWithItems(submit ExamSubmit) error {
 					return err
 				}
 			} else {
-				if err := tx.Model(item).Update(item).Error; err != nil {
+				if err := tx.Debug().Model(item).Update(item).Error; err != nil {
 					return err
 				}
 			}

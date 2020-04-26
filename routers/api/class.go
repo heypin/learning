@@ -8,8 +8,8 @@ import (
 )
 
 type CreateClassForm struct {
-	CourseId  uint   `form:"courseId" binding:"required" `
-	ClassName string `form:"className" binding:"required" `
+	CourseId  uint   `json:"courseId" binding:"required" `
+	ClassName string `json:"className" binding:"required" `
 }
 
 func CreateClass(c *gin.Context) {

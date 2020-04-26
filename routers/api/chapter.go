@@ -13,8 +13,8 @@ import (
 )
 
 type CreateChapterForm struct {
-	CourseId    uint   `form:"courseId" binding:"required" `
-	ChapterName string `form:"chapterName" binding:"required" `
+	CourseId    uint   `json:"courseId" binding:"required" `
+	ChapterName string `json:"chapterName" binding:"required" `
 }
 
 func CreateChapter(c *gin.Context) {
@@ -54,8 +54,8 @@ func GetChapterByCourseId(c *gin.Context) {
 }
 
 type UpdateChapterNameForm struct {
-	Id          uint   `form:"courseId" binding:"required" `
-	ChapterName string `form:"chapterName" binding:"required" `
+	Id          uint   `json:"courseId" binding:"required" `
+	ChapterName string `json:"chapterName" binding:"required" `
 }
 
 func UpdateChapterName(c *gin.Context) {
@@ -104,7 +104,7 @@ func DeleteChapterById(c *gin.Context) {
 }
 
 type UpdateChapterVideoForm struct {
-	Id uint `form:"id" binding:"required" `
+	Id uint `json:"id" binding:"required" `
 }
 
 func UpdateChapterVideo(c *gin.Context) {

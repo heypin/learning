@@ -67,7 +67,7 @@ func ExecuteJsProgram(in string) (out string, err error) {
 	}()
 	var logger string
 	err = vm.Set("log", func(call otto.FunctionCall) otto.Value {
-		outputs := make([]string, 5)
+		outputs := make([]string, 0)
 		for _, arg := range call.ArgumentList {
 			outputs = append(outputs, arg.String())
 		}

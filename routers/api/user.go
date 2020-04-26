@@ -12,8 +12,8 @@ import (
 )
 
 type UserLoginForm struct {
-	Email    string `form:"email" binding:"required,email" `
-	Password string `form:"password" binding:"required,min=8" `
+	Email    string `json:"email" binding:"required,email" `
+	Password string `json:"password" binding:"required,min=8" `
 }
 
 func UserLogin(c *gin.Context) {
@@ -37,9 +37,9 @@ func UserLogin(c *gin.Context) {
 }
 
 type UserRegisterForm struct {
-	Email    string `form:"email" binding:"required,email" `
-	Password string `form:"password" binding:"required,min=8" `
-	RealName string `form:"realName" binding:"required" `
+	Email    string `json:"email" binding:"required,email" `
+	Password string `json:"password" binding:"required,min=8" `
+	RealName string `json:"realName" binding:"required" `
 }
 
 func UserRegister(c *gin.Context) {
@@ -83,10 +83,10 @@ func GetUserByToken(c *gin.Context) {
 }
 
 type UserUpdateForm struct {
-	Email    string `form:"email" binding:"required,email" `
-	RealName string `form:"realName" binding:"required" `
-	Number   string `form:"number"`
-	Sex      uint   `form:"sex" `
+	Email    string `json:"email" binding:"required,email" `
+	RealName string `json:"realName" binding:"required" `
+	Number   string `json:"number"`
+	Sex      uint   `json:"sex" `
 }
 
 func UpdateUserById(c *gin.Context) {
@@ -126,8 +126,8 @@ func UpdateUserById(c *gin.Context) {
 }
 
 type UserPasswordForm struct {
-	Password    string `form:"password" binding:"required,min=8" `
-	OldPassword string `form:"oldPassword" binding:"required,min=8" `
+	Password    string `json:"password" binding:"required,min=8" `
+	OldPassword string `json:"oldPassword" binding:"required,min=8" `
 }
 
 func UpdateUserPassword(c *gin.Context) {

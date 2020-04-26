@@ -4,26 +4,28 @@ import (
 	"github.com/gin-gonic/gin"
 	"learning/models"
 	"learning/service"
+	"log"
 	"net/http"
 	"strconv"
 )
 
 type CreateExamLibItemForm struct {
-	ExamLibId uint     `form:"examLibItemId" binding:"required"`
-	Type      string   `form:"type" binding:"required"`
-	Question  string   `form:"question" binding:"required"`
-	Answer    string   `form:"answer" binding:"required"`
-	Score     uint     `form:"score" binding:"required"`
-	Options   []Option `form:"options" `
+	ExamLibId uint     `json:"examLibId" binding:"required"`
+	Type      string   `json:"type" binding:"required"`
+	Question  string   `json:"question" binding:"required"`
+	Answer    string   `json:"answer" binding:"required"`
+	Score     uint     `json:"score" binding:"required"`
+	Options   []Option `json:"options" `
 }
 
 func CreateExamLibItemAndOptions(c *gin.Context) {
 	var form CreateExamLibItemForm
 	if err := c.ShouldBind(&form); err != nil {
 		c.String(http.StatusBadRequest, "")
+		log.Println(err)
 		return
 	}
-	options := make([]*models.ExamLibItemOption, 4)
+	options := make([]*models.ExamLibItemOption, 0)
 	if form.Type == models.Subject_Single || form.Type == models.Subject_Multiple {
 		for _, v := range form.Options {
 			options = append(options, &models.ExamLibItemOption{
@@ -48,21 +50,23 @@ func CreateExamLibItemAndOptions(c *gin.Context) {
 }
 
 type UpdateExamLibItemForm struct {
-	Id       uint     `form:"id" binding:"required"`
-	Type     string   `form:"type" binding:"required"`
-	Question string   `form:"question" binding:"required"`
-	Answer   string   `form:"answer" binding:"required"`
-	Score    uint     `form:"score" binding:"required"`
-	Options  []Option `form:"options" `
+	Id        uint     `json:"id" binding:"required"`
+	ExamLibId uint     `json:"examLibId" binding:"required"`
+	Type      string   `json:"type" binding:"required"`
+	Question  string   `json:"question" binding:"required"`
+	Answer    string   `json:"answer" binding:"required"`
+	Score     uint     `json:"score" binding:"required"`
+	Options   []Option `json:"options" `
 }
 
 func UpdateExamLibItemAndOptions(c *gin.Context) {
 	var form UpdateExamLibItemForm
 	if err := c.ShouldBind(&form); err != nil {
 		c.String(http.StatusBadRequest, "")
+		log.Println(err)
 		return
 	}
-	options := make([]*models.ExamLibItemOption, 4)
+	options := make([]*models.ExamLibItemOption, 0)
 	if form.Type == models.Subject_Single || form.Type == models.Subject_Multiple {
 		for _, v := range form.Options {
 			options = append(options, &models.ExamLibItemOption{
@@ -72,12 +76,13 @@ func UpdateExamLibItemAndOptions(c *gin.Context) {
 		}
 	}
 	s := service.ExamLibItemService{
-		Id:       form.Id,
-		Type:     form.Type,
-		Question: form.Question,
-		Answer:   form.Answer,
-		Score:    form.Score,
-		Options:  options,
+		Id:        form.Id,
+		ExamLibId: form.ExamLibId,
+		Type:      form.Type,
+		Question:  form.Question,
+		Answer:    form.Answer,
+		Score:     form.Score,
+		Options:   options,
 	}
 	if err := s.UpdateExamLibItemAndOptions(); err == nil {
 		c.String(http.StatusOK, "")

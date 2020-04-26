@@ -29,12 +29,13 @@ func (s *ExamLibItemService) CreateExamLibItemAndOptions() (id uint, err error) 
 }
 func (s *ExamLibItemService) UpdateExamLibItemAndOptions() (err error) {
 	item := models.ExamLibItem{
-		Model:    gorm.Model{ID: s.Id},
-		Type:     s.Type,
-		Question: s.Question,
-		Answer:   s.Answer,
-		Score:    s.Score,
-		Options:  s.Options,
+		Model:     gorm.Model{ID: s.Id},
+		ExamLibId: s.ExamLibId,
+		Type:      s.Type,
+		Question:  s.Question,
+		Answer:    s.Answer,
+		Score:     s.Score,
+		Options:   s.Options,
 	}
 	err = models.UpdateExamLibItemAndOptions(item)
 	return

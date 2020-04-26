@@ -76,14 +76,14 @@ func GetHomeworkUserSubmitWithItems(c *gin.Context) {
 	}
 	userId, err := strconv.Atoi(c.Query("userId"))
 	if err != nil || userId <= 0 {
-		s.UserId = uint(userId)
-	} else {
 		if claims, ok := c.Get("claims"); ok {
 			s.UserId = claims.(*utils.Claims).Id
 		} else {
 			c.String(http.StatusInternalServerError, "")
 			return
 		}
+	} else {
+		s.UserId = uint(userId)
 	}
 	if submit, err := s.GetHomeworkUserSubmitWithItems(); err == nil {
 		c.JSON(http.StatusOK, submit)
@@ -93,13 +93,13 @@ func GetHomeworkUserSubmitWithItems(c *gin.Context) {
 }
 
 type UpdateSubmitItem struct {
-	Id                uint `form:"id"`
-	HomeworkLibItemId uint `form:"homeworkLibItemId" binding:"required"`
-	Score             uint `form:"score"`
+	Id                uint  `json:"id"`
+	HomeworkLibItemId uint  `json:"homeworkLibItemId" binding:"required"`
+	Score             *uint `json:"score"`
 }
 type UpdateHomeworkSubmitForm struct {
-	Id          uint               `form:"id" binding:"required"`
-	SubmitItems []UpdateSubmitItem `form:"submitItems"`
+	Id          uint               `json:"id" binding:"required"`
+	SubmitItems []UpdateSubmitItem `json:"submitItems"`
 }
 
 func UpdateHomeworkSubmitItemsScore(c *gin.Context) {
@@ -132,14 +132,14 @@ func UpdateHomeworkSubmitItemsScore(c *gin.Context) {
 }
 
 type SubmitItem struct {
-	Id                uint   `form:"id"`
-	HomeworkLibItemId uint   `form:"homeworkLibItemId" binding:"required"`
-	Answer            string `form:"answer"`
+	Id                uint   `json:"id"`
+	HomeworkLibItemId uint   `json:"homeworkLibItemId" binding:"required"`
+	Answer            string `json:"answer"`
 }
 type HomeworkSubmitForm struct {
-	Id                uint         `form:"id" ` //
-	HomeworkPublishId uint         `form:"homeworkPublishId" binding:"required"`
-	SubmitItems       []SubmitItem `form:"submitItems"`
+	Id                uint         `json:"id" `
+	HomeworkPublishId uint         `json:"homeworkPublishId" binding:"required"`
+	SubmitItems       []SubmitItem `json:"submitItems"`
 }
 
 func SubmitHomeworkWithItems(c *gin.Context) {
@@ -188,7 +188,7 @@ func setScore(submitItem *models.HomeworkSubmitItem, libItem *models.HomeworkLib
 	} else if libItem.Type == models.Subject_Single ||
 		libItem.Type == models.Subject_Judgement {
 		if submitItem.Answer == libItem.Answer {
-			submitItem.Score = libItem.Score
+			*submitItem.Score = libItem.Score
 		}
 	} else if libItem.Type == models.Subject_Multiple {
 		submitSet := mapset.NewSet()
@@ -200,7 +200,7 @@ func setScore(submitItem *models.HomeworkSubmitItem, libItem *models.HomeworkLib
 			rightSet.Add(v)
 		}
 		if submitSet.Equal(rightSet) {
-			submitItem.Score = libItem.Score
+			*submitItem.Score = libItem.Score
 		}
 	} else if libItem.Type == models.Subject_Blank {
 		rightArr := strings.Split(libItem.Answer, ",")
@@ -217,6 +217,6 @@ func setScore(submitItem *models.HomeworkSubmitItem, libItem *models.HomeworkLib
 				rightCount++
 			}
 		}
-		submitItem.Score = uint(rightCount / len(rightArr))
+		*submitItem.Score = uint(rightCount / len(rightArr))
 	}
 }

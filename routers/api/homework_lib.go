@@ -8,8 +8,8 @@ import (
 )
 
 type CreateHomeworkLibForm struct {
-	CourseId uint   `form:"courseId" binding:"required"`
-	Name     string `form:"name" binding:"required"`
+	CourseId uint   `json:"courseId" binding:"required"`
+	Name     string `json:"name" binding:"required"`
 }
 
 func CreateHomeworkLib(c *gin.Context) {
@@ -30,8 +30,8 @@ func CreateHomeworkLib(c *gin.Context) {
 }
 
 type UpdateHomeworkLibForm struct {
-	Id   uint   `form:"id" binding:"required"`
-	Name string `form:"name"`
+	Id   uint   `json:"id" binding:"required"`
+	Name string `json:"name"`
 }
 
 func UpdateHomeworkLibNameById(c *gin.Context) {

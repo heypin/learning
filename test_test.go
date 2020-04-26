@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	mapset "github.com/deckarep/golang-set"
@@ -10,7 +11,6 @@ import (
 	"learning/models"
 	"log"
 	"net/http"
-	"strconv"
 	"strings"
 	"testing"
 	"time"
@@ -19,10 +19,14 @@ import (
 func TestMy(t *testing.T) {
 	conf.SetUp()
 	models.Setup()
+	submit, _ := models.GetExamSubmitById(1)
+	fmt.Println(submit)
+	arr, _ := json.Marshal(submit)
+	log.Println(string(arr))
+	log.Println(time.Time{}, time.Time{} == submit.CreatedAt)
 	//comments,_:=models.GetUserStudyClass(6)
 	//fmt.Println(comments)
-	//arr,_:=json.Marshal(comments)
-	//log.Println(string(arr))
+
 }
 
 var halt = errors.New("block")
@@ -52,7 +56,7 @@ func TestJsProgram(t *testing.T) {
 
 	var logger string
 	vm.Set("log", func(call otto.FunctionCall) otto.Value {
-		outputs := make([]string, 5)
+		outputs := make([]string, 0)
 		for _, arg := range call.ArgumentList {
 			outputs = append(outputs, arg.String())
 		}
@@ -96,6 +100,14 @@ func TestGo(t *testing.T) {
 	fmt.Println(rightSet.Equal(answerSet))
 }
 func TestM(t *testing.T) {
-	v, err := strconv.Atoi("")
-	log.Println(v, err)
+
+	num := 12345
+	tail := 0
+	str := make([]int, 0)
+	for num != 0 {
+		tail = num % 10
+		num = (num - tail) / 10
+		str = append(str, tail)
+	}
+	fmt.Println(str)
 }

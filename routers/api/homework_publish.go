@@ -11,11 +11,11 @@ import (
 )
 
 type PublishHomeworkForm struct {
-	ClassId       uint      `form:"classId" binding:"required"`
-	HomeworkLibId uint      `form:"homeworkLibId" binding:"required"`
-	BeginTime     time.Time `form:"beginTime" binding:"required"`
-	EndTime       time.Time `form:"endTime" binding:"required"`
-	Resubmit      *uint     `form:"resubmit" binding:"required"`
+	ClassId       uint      `json:"classId" binding:"required"`
+	HomeworkLibId uint      `json:"homeworkLibId" binding:"required"`
+	BeginTime     time.Time `json:"beginTime" binding:"required"`
+	EndTime       time.Time `json:"endTime" binding:"required"`
+	Resubmit      *uint     `json:"resubmit" binding:"required"`
 }
 
 func PublishHomework(c *gin.Context) {
@@ -46,10 +46,10 @@ func PublishHomework(c *gin.Context) {
 }
 
 type UpdateHomeworkPublishForm struct {
-	Id        uint      `form:"id" binding:"required"`
-	BeginTime time.Time `form:"beginTime" binding:"required"`
-	EndTime   time.Time `form:"endTime" binding:"required"`
-	Resubmit  *uint     `form:"resubmit" binding:"required"`
+	Id        uint      `json:"id" binding:"required"`
+	BeginTime time.Time `json:"beginTime" binding:"required"`
+	EndTime   time.Time `json:"endTime" binding:"required"`
+	Resubmit  *uint     `json:"resubmit" binding:"required"`
 }
 
 func UpdateHomeworkPublishById(c *gin.Context) {

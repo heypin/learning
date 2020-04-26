@@ -95,9 +95,9 @@ func CreateFile(c *gin.Context) {
 }
 
 type CreateFolderForm struct {
-	CourseId   uint   `form:"courseId" binding:"required" `
-	FolderName string `form:"folderName" binding:"required" `
-	ParentId   int    `form:"parentId"`
+	CourseId   uint   `json:"courseId" binding:"required" `
+	FolderName string `json:"folderName" binding:"required" `
+	ParentId   int    `json:"parentId"`
 }
 
 func CreateFolder(c *gin.Context) {

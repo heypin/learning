@@ -10,11 +10,11 @@ import (
 )
 
 type PublishExamForm struct {
-	ClassId   uint      `form:"classId" binding:"required"`
-	ExamLibId uint      `form:"examLibId" binding:"required"`
-	BeginTime time.Time `form:"beginTime" binding:"required"`
-	EndTime   time.Time `form:"endTime" binding:"required"`
-	Duration  uint      `form:"duration" binding:"required"`
+	ClassId   uint      `json:"classId" binding:"required"`
+	ExamLibId uint      `json:"examLibId" binding:"required"`
+	BeginTime time.Time `json:"beginTime" binding:"required"`
+	EndTime   time.Time `json:"endTime" binding:"required"`
+	Duration  uint      `json:"duration" binding:"required"`
 }
 
 func PublishExam(c *gin.Context) {
@@ -44,10 +44,10 @@ func PublishExam(c *gin.Context) {
 }
 
 type UpdateExamPublishForm struct {
-	Id        uint      `form:"id" binding:"required"`
-	BeginTime time.Time `form:"beginTime" binding:"required"`
-	EndTime   time.Time `form:"endTime" binding:"required"`
-	Duration  uint      `form:"duration" binding:"required"`
+	Id        uint      `json:"id" binding:"required"`
+	BeginTime time.Time `json:"beginTime" binding:"required"`
+	EndTime   time.Time `json:"endTime" binding:"required"`
+	Duration  uint      `json:"duration" binding:"required"`
 }
 
 func UpdateExamPublishById(c *gin.Context) {

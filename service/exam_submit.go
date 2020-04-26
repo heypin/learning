@@ -13,7 +13,7 @@ type ExamSubmitService struct {
 	ExamPublishId uint
 	TotalScore    uint
 	StartTime     time.Time
-	FinishTime    time.Time
+	FinishTime    *time.Time
 	Mark          *uint
 	SubmitItems   []*models.ExamSubmitItem
 }
@@ -50,6 +50,10 @@ func (s *ExamSubmitService) CreateExamSubmit() (examSubmit *models.ExamSubmit, e
 }
 func (s *ExamSubmitService) GetExamSubmitById() (submit *models.ExamSubmit, err error) {
 	return models.GetExamSubmitById(s.Id)
+}
+func (s *ExamSubmitService) GetUserExamSubmitRecord() (submit *models.ExamSubmit, err error) {
+	submit, err = models.GetUserExamSubmitRecord(s.UserId, s.ExamPublishId)
+	return
 }
 func (s *ExamSubmitService) GetExamSubmitsByPublishId() (submits []*models.ExamSubmit, err error) {
 	submits, err = models.GetExamSubmitsByPublishId(s.ExamPublishId)

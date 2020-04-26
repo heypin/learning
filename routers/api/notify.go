@@ -10,9 +10,9 @@ import (
 )
 
 type CreateNotifyForm struct {
-	CourseId uint   `form:"courseId" binding:"required"`
-	Title    string `form:"title" binding:"required"`
-	Content  string `form:"content" binding:"required"`
+	CourseId uint   `json:"courseId" binding:"required"`
+	Title    string `json:"title" binding:"required"`
+	Content  string `json:"content" binding:"required"`
 }
 
 func CreateNotify(c *gin.Context) {
@@ -38,9 +38,9 @@ func CreateNotify(c *gin.Context) {
 }
 
 type UpdateNotifyForm struct {
-	Id      uint   `form:"id" binding:"required"`
-	Title   string `form:"title" binding:"required"`
-	Content string `form:"content" binding:"required"`
+	Id      uint   `json:"id" binding:"required"`
+	Title   string `json:"title" binding:"required"`
+	Content string `json:"content" binding:"required"`
 }
 
 func UpdateNotifyById(c *gin.Context) {

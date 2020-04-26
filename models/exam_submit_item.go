@@ -7,5 +7,5 @@ type ExamSubmitItem struct {
 	ExamSubmitId  uint   `json:"examSubmitId"`
 	ExamLibItemId uint   `json:"examLibItemId"`
 	Answer        string `json:"answer"`
-	Score         uint   `json:"score"`
+	Score         *uint  `json:"score"`
 }

@@ -13,12 +13,10 @@ import (
 	"time"
 )
 
-type StartExamForm struct {
-	ExamPublishId uint `form:"examPublishId" binding:"required"`
-}
-
 func StartExam(c *gin.Context) {
-	var form StartExamForm
+	form := struct {
+		ExamPublishId uint `json:"examPublishId" binding:"required"`
+	}{}
 	if err := c.ShouldBind(&form); err != nil {
 		c.String(http.StatusBadRequest, "")
 		return
@@ -36,20 +34,18 @@ func StartExam(c *gin.Context) {
 	c.String(http.StatusInternalServerError, "")
 }
 
-type EndExamForm struct {
-	Id            uint `form:"id" binding:"required"`
-	ExamPublishId uint `form:"examPublishId" binding:"required"`
-}
-
 func FinishExam(c *gin.Context) {
-	var form EndExamForm
+	form := struct {
+		Id uint `json:"id" binding:"required"`
+	}{}
 	if err := c.ShouldBind(&form); err != nil {
 		c.String(http.StatusBadRequest, "")
 		return
 	}
+	now := time.Now()
 	s := service.ExamSubmitService{
 		Id:         form.Id,
-		FinishTime: time.Now(),
+		FinishTime: &now,
 	}
 	if err := s.UpdateExamSubmitById(); err == nil {
 		c.String(http.StatusOK, "")
@@ -98,14 +94,14 @@ func GetExamUserSubmitWithItems(c *gin.Context) {
 	}
 	userId, err := strconv.Atoi(c.Query("userId"))
 	if err != nil || userId <= 0 {
-		s.UserId = uint(userId)
-	} else {
 		if claims, ok := c.Get("claims"); ok {
 			s.UserId = claims.(*utils.Claims).Id
 		} else {
 			c.String(http.StatusInternalServerError, "")
 			return
 		}
+	} else {
+		s.UserId = uint(userId)
 	}
 	if submit, err := s.GetExamUserSubmitWithItems(); err == nil {
 		c.JSON(http.StatusOK, submit)
@@ -115,13 +111,13 @@ func GetExamUserSubmitWithItems(c *gin.Context) {
 }
 
 type UpdateExamSubmitItem struct {
-	Id            uint `form:"id"`
-	ExamLibItemId uint `form:"examLibItemId" binding:"required"`
-	Score         uint `form:"score"`
+	Id            uint  `json:"id"`
+	ExamLibItemId uint  `json:"examLibItemId" binding:"required"`
+	Score         *uint `json:"score"`
 }
 type UpdateExamSubmitForm struct {
-	Id          uint                   `form:"id" binding:"required"`
-	SubmitItems []UpdateExamSubmitItem `form:"submitItems"`
+	Id          uint                   `json:"id" binding:"required"`
+	SubmitItems []UpdateExamSubmitItem `json:"submitItems"`
 }
 
 func UpdateExamSubmitItemsScore(c *gin.Context) {
@@ -130,7 +126,7 @@ func UpdateExamSubmitItemsScore(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, "")
 		return
 	}
-	submitItems := make([]*models.ExamSubmitItem, 5)
+	submitItems := make([]*models.ExamSubmitItem, 0)
 	for _, item := range form.SubmitItems {
 		submitItems = append(submitItems, &models.ExamSubmitItem{
 			Model:         gorm.Model{ID: item.Id},
@@ -153,14 +149,14 @@ func UpdateExamSubmitItemsScore(c *gin.Context) {
 }
 
 type ExamSubmitItem struct {
-	Id            uint   `form:"id"`
-	ExamLibItemId uint   `form:"examLibItemId" binding:"required"`
-	Answer        string `form:"answer"`
+	Id            uint   `json:"id"`
+	ExamLibItemId uint   `json:"examLibItemId" binding:"required"`
+	Answer        string `json:"answer"`
 }
 type ExamSubmitForm struct {
-	Id            uint             `form:"id" binding:"required"` //
-	ExamPublishId uint             `form:"examPublishId" binding:"required"`
-	SubmitItems   []ExamSubmitItem `form:"submitItems"`
+	Id            uint             `json:"id" binding:"required"`
+	ExamPublishId uint             `json:"examPublishId" binding:"required"`
+	SubmitItems   []ExamSubmitItem `json:"submitItems"`
 }
 
 func SubmitExamItem(c *gin.Context) {
@@ -169,7 +165,39 @@ func SubmitExamItem(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, "")
 		return
 	}
-	submitItems := make([]*models.ExamSubmitItem, 1)
+	publishService := service.ExamPublishService{
+		Id: form.ExamPublishId,
+	}
+	claims, _ := c.Get("claims")
+	submitService := service.ExamSubmitService{
+		Id:            form.Id,
+		ExamPublishId: form.ExamPublishId,
+		UserId:        claims.(*utils.Claims).Id,
+	}
+	if publish, err := publishService.GetExamPublishById(); err != nil {
+		c.String(http.StatusInternalServerError, "")
+		return
+	} else {
+		now := time.Now()
+		if now.Before(publish.BeginTime) || now.After(publish.EndTime) {
+			c.String(http.StatusBadRequest, "")
+			return
+		}
+		submit, _ := submitService.GetUserExamSubmitRecord()
+		if submit == nil {
+			if publish.EndTime.Before(now) {
+				c.String(http.StatusBadRequest, "")
+				return
+			}
+		} else {
+			if now.Sub(submit.StartTime).Minutes() > float64(publish.Duration) ||
+				submit.FinishTime != nil {
+				c.String(http.StatusBadRequest, "")
+				return
+			}
+		}
+	}
+	submitItems := make([]*models.ExamSubmitItem, 0)
 	for _, item := range form.SubmitItems {
 		submitItems = append(submitItems, &models.ExamSubmitItem{
 			Model:         gorm.Model{ID: item.Id},
@@ -178,11 +206,8 @@ func SubmitExamItem(c *gin.Context) {
 		})
 	}
 	var mark uint = 1
-	submitService := service.ExamSubmitService{
-		Id:          form.Id,
-		Mark:        &mark,
-		SubmitItems: submitItems,
-	}
+	submitService.Mark = &mark
+	submitService.SubmitItems = submitItems
 	for _, submitItem := range submitService.SubmitItems {
 		s := service.ExamLibItemService{
 			Id: submitItem.ExamLibItemId,
@@ -203,7 +228,7 @@ func setExamScore(submitItem *models.ExamSubmitItem, libItem *models.ExamLibItem
 	} else if libItem.Type == models.Subject_Single ||
 		libItem.Type == models.Subject_Judgement {
 		if submitItem.Answer == libItem.Answer {
-			submitItem.Score = libItem.Score
+			*submitItem.Score = libItem.Score
 		}
 	} else if libItem.Type == models.Subject_Multiple {
 		submitSet := mapset.NewSet()
@@ -215,7 +240,7 @@ func setExamScore(submitItem *models.ExamSubmitItem, libItem *models.ExamLibItem
 			rightSet.Add(v)
 		}
 		if submitSet.Equal(rightSet) {
-			submitItem.Score = libItem.Score
+			*submitItem.Score = libItem.Score
 		}
 	} else if libItem.Type == models.Subject_Blank {
 		rightArr := strings.Split(libItem.Answer, ",")
@@ -232,6 +257,6 @@ func setExamScore(submitItem *models.ExamSubmitItem, libItem *models.ExamLibItem
 				rightCount++
 			}
 		}
-		submitItem.Score = uint(rightCount / len(rightArr))
+		*submitItem.Score = uint(rightCount / len(rightArr))
 	}
 }

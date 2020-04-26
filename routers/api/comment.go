@@ -62,11 +62,11 @@ func GetCommentReplyToUser(c *gin.Context) {
 }
 
 type CreateCommentForm struct {
-	CourseId    uint   `form:"courseId" binding:"required"`
-	ParentId    uint   `form:"parentId" `
-	ReplyId     uint   `form:"replyId" `
-	ReplyUserId uint   `form:"replyUserId"`
-	Content     string `form:"content" binding:"required"`
+	CourseId    uint   `json:"courseId" binding:"required"`
+	ParentId    uint   `json:"parentId" `
+	ReplyId     uint   `json:"replyId" `
+	ReplyUserId uint   `json:"replyUserId"`
+	Content     string `json:"content" binding:"required"`
 }
 
 func CreateComment(c *gin.Context) {

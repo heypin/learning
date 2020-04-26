@@ -39,7 +39,7 @@ func GetClassesByUserId(c *gin.Context) {
 
 func JoinClassByClassCode(c *gin.Context) {
 	form := struct {
-		ClassCode string `form:"classCode" binding:"required"`
+		ClassCode string `json:"classCode" binding:"required"`
 	}{}
 	if err := c.ShouldBind(&form); err != nil {
 		c.String(http.StatusBadRequest, "")
@@ -58,8 +58,8 @@ func JoinClassByClassCode(c *gin.Context) {
 }
 
 type ClassMemberForm struct {
-	ClassId uint `form:"classId" binding:"required"`
-	UserId  uint `form:"userId" binding:"userId"`
+	ClassId uint `json:"classId" binding:"required"`
+	UserId  uint `json:"userId" binding:"userId"`
 }
 
 func DeleteClassMember(c *gin.Context) {

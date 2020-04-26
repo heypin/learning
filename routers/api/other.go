@@ -28,8 +28,8 @@ func PlayVideo(c *gin.Context) {
 }
 
 type ExecuteProgramForm struct {
-	Language string `form:"language" binding:"required"`
-	Input    string `form:"input" binding:"required"`
+	Language string `json:"language" binding:"required"`
+	Input    string `json:"input" binding:"required"`
 }
 
 func ExecuteProgram(c *gin.Context) {

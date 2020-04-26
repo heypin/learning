@@ -10,16 +10,16 @@ import (
 )
 
 type Option struct {
-	Sequence string `form:"sequence" binding:"required"`
-	Content  string `form:"content" binding:"required"`
+	Sequence string `json:"sequence" binding:"required"`
+	Content  string `json:"content" binding:"required"`
 }
 type CreateLibItemForm struct {
-	HomeworkLibId uint     `form:"homeworkLibItemId" binding:"required"`
-	Type          string   `form:"type" binding:"required"`
-	Question      string   `form:"question" binding:"required"`
-	Answer        string   `form:"answer" binding:"required"`
-	Score         uint     `form:"score" binding:"required"`
-	Options       []Option `form:"options" `
+	HomeworkLibId uint     `json:"homeworkLibId" binding:"required"`
+	Type          string   `json:"type" binding:"required"`
+	Question      string   `json:"question" binding:"required"`
+	Answer        string   `json:"answer" binding:"required"`
+	Score         uint     `json:"score" binding:"required"`
+	Options       []Option `json:"options" `
 }
 
 func CreateHomeworkLibItemAndOptions(c *gin.Context) {
@@ -55,12 +55,13 @@ func CreateHomeworkLibItemAndOptions(c *gin.Context) {
 }
 
 type UpdateLibItemForm struct {
-	Id       uint     `form:"id" binding:"required"`
-	Type     string   `form:"type" binding:"required"`
-	Question string   `form:"question" binding:"required"`
-	Answer   string   `form:"answer" binding:"required"`
-	Score    uint     `form:"score" binding:"required"`
-	Options  []Option `form:"options" `
+	Id            uint     `json:"id" binding:"required"`
+	HomeworkLibId uint     `json:"homeworkLibId" binding:"required"`
+	Type          string   `json:"type" binding:"required"`
+	Question      string   `json:"question" binding:"required"`
+	Answer        string   `json:"answer" binding:"required"`
+	Score         uint     `json:"score" binding:"required"`
+	Options       []Option `json:"options" `
 }
 
 func UpdateHomeworkLibItemAndOptions(c *gin.Context) {
@@ -81,12 +82,13 @@ func UpdateHomeworkLibItemAndOptions(c *gin.Context) {
 		}
 	}
 	s := service.HomeworkLibItemService{
-		Id:       form.Id,
-		Type:     form.Type,
-		Question: form.Question,
-		Answer:   form.Answer,
-		Score:    form.Score,
-		Options:  options,
+		Id:            form.Id,
+		HomeworkLibId: form.HomeworkLibId,
+		Type:          form.Type,
+		Question:      form.Question,
+		Answer:        form.Answer,
+		Score:         form.Score,
+		Options:       options,
 	}
 	if err := s.UpdateLibItemAndOptions(); err == nil {
 		c.String(http.StatusOK, "")

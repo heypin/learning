@@ -41,9 +41,11 @@ func UpdateLibSubjectCountAndTotalScore(item HomeworkLibItem, tx *gorm.DB) error
 		return err
 	}
 	var totalScore uint
-	if err := tx.Model(&HomeworkLibItem{}).Select("SUM(score)").
-		Where("homework_lib_id = ?", item.HomeworkLibId).Row().Scan(&totalScore); err != nil {
-		return err
+	if subjectCount != 0 {
+		if err := tx.Model(&HomeworkLibItem{}).Select("SUM(score)").
+			Where("homework_lib_id = ?", item.HomeworkLibId).Row().Scan(&totalScore); err != nil {
+			return err
+		}
 	}
 	lib := HomeworkLib{
 		Model: gorm.Model{ID: item.HomeworkLibId},
