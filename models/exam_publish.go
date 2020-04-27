@@ -52,7 +52,7 @@ func GetExamPublishesByClassId(classId uint) (publishes []*ExamPublish, err erro
 }
 func GetExamPublishById(id uint) (*ExamPublish, error) {
 	var publish ExamPublish
-	err := db.Where("id = ?", id).First(&publish).Error
+	err := db.Where("id = ?", id).Preload("ExamLib").First(&publish).Error
 	if err != nil {
 		return nil, err
 	}

@@ -19,24 +19,29 @@ type UserService struct {
 
 func (s *UserService) Auth() (uint, bool) {
 	user, err := models.GetUserByEmail(s.Email)
-	if err == nil && user != nil && utils.CheckPassword(user.Password, s.Password) {
+	if err == nil && utils.CheckPassword(user.Password, s.Password) {
 		return user.ID, true
 	}
 	return 0, false
 }
-func (s *UserService) Register() (id uint, err error) {
-	u, _ := models.GetUserByEmail(s.Email)
-	if u == nil {
+func (s *UserService) Register() (uint, error) {
+	u, err := models.GetUserByEmail(s.Email)
+	if err != nil {
+		return 0, err
+	} else if u == nil {
 		user := models.User{
 			Email:    s.Email,
 			Password: utils.Encrypt(s.Password),
 			RealName: s.RealName,
 		}
-		if id, err = models.AddUser(user); err == nil {
+		if id, err := models.AddUser(user); err == nil {
 			return id, nil
+		} else {
+			return 0, err
 		}
+	} else {
+		return 0, models.ErrRecordExist
 	}
-	return 0, err
 }
 
 func (s *UserService) GetUserByEmail() (*models.User, error) {
@@ -53,9 +58,9 @@ func (s *UserService) GetUserById() (*models.User, error) {
 	}
 	return user, nil
 }
-func (s *UserService) UpdateUserPassword(oldpwd string) error {
+func (s *UserService) UpdateUserPassword(oldPassword string) error {
 	result, err := models.GetUserById(s.Id)
-	if err != nil || result == nil || !utils.CheckPassword(result.Password, oldpwd) {
+	if err != nil || !utils.CheckPassword(result.Password, oldPassword) {
 		return errors.New("修改失败")
 	}
 	user := models.User{

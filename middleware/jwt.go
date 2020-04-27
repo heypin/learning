@@ -15,8 +15,8 @@ func JWT() gin.HandlerFunc {
 			claims, err := utils.ParseToken(token)
 			if err == nil {
 				path := c.Request.URL.Path
-				if (claims.Role == models.ROLE_ADMIN && strings.HasPrefix("/admin/", path)) ||
-					(claims.Role == models.ROLE_USER) {
+				if (claims.Role == models.RoleAdmin && strings.HasPrefix("/admin/", path)) ||
+					(claims.Role == models.RoleUser) {
 					c.Set("claims", claims)
 					c.Next()
 					return

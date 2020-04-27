@@ -36,7 +36,7 @@ func (s *HomeworkSubmitService) SubmitHomeworkWithItems() (uint, error) {
 		if submit, _ := s.GetHomeworkSubmitById(); *submit.Mark == 1 {
 			return 0, errors.New("已批阅，不能再提交")
 		}
-		if *publish.Resubmit == models.Resubmit_Allow {
+		if *publish.Resubmit == models.ResubmitAllow {
 			if err := s.UpdateSubmitHomeworkWithItems(); err != nil {
 				return 0, err
 			} else {

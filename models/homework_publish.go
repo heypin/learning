@@ -52,7 +52,7 @@ func GetHomeworkPublishesByClassId(classId uint) (publishes []*HomeworkPublish, 
 }
 func GetHomeworkPublishById(id uint) (*HomeworkPublish, error) {
 	var publish HomeworkPublish
-	err := db.Where("id = ?", id).First(&publish).Error
+	err := db.Where("id = ?", id).Preload("HomeworkLib").First(&publish).Error
 	if err != nil {
 		return nil, err
 	}

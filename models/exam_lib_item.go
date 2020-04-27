@@ -68,7 +68,7 @@ func GetExamLibItemsByLibId(libId uint) (items []*ExamLibItem, err error) {
 func UpdateExamLibItemAndOptions(item ExamLibItem) error {
 	err := db.Transaction(func(tx *gorm.DB) error {
 		//先删除选项再重新设置
-		if item.Type == Subject_Single || item.Type == Subject_Multiple {
+		if item.Type == SubjectSingle || item.Type == SubjectMultiple {
 			if err := tx.Where("exam_lib_item_id = ?", item.ID).
 				Delete(&ExamLibItemOption{}).Error; err != nil {
 				return err
@@ -100,7 +100,6 @@ func DeleteExamLibItemAndOptions(id uint) error {
 			Delete(&ExamLibItemOption{}).Error; err != nil {
 			return err
 		}
-
 		if err := UpdateExamLibSubjectCountAndTotalScore(item, tx); err != nil {
 			return err
 		}

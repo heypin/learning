@@ -7,7 +7,6 @@ import (
 
 type ChapterService struct {
 	Id          uint
-	UserId      uint
 	CourseId    uint
 	ChapterName string
 	VideoName   *string
@@ -15,7 +14,6 @@ type ChapterService struct {
 
 func (s *ChapterService) AddChapter() (id uint, err error) {
 	c := models.Chapter{
-		UserId:      s.UserId,
 		CourseId:    s.CourseId,
 		ChapterName: s.ChapterName,
 		VideoName:   s.VideoName,
@@ -38,7 +36,6 @@ func (s *ChapterService) GetChapterById() (c *models.Chapter, err error) {
 func (s *ChapterService) UpdateChapterById() (err error) {
 	c := models.Chapter{
 		Model:       gorm.Model{ID: s.Id},
-		UserId:      s.UserId,
 		CourseId:    s.CourseId,
 		ChapterName: s.ChapterName,
 		VideoName:   s.VideoName,

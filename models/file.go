@@ -38,15 +38,17 @@ func GetFileById(id uint) (*File, error) {
 	}
 	return &f, nil
 }
-func UpdateFileById(f File) (err error) {
-	if err := db.Model(&f).Update(f).Error; err != nil {
-		return err
-	}
-	return nil
-}
+
 func DeleteFileById(id uint) (err error) {
 	if err = db.Where("id = ?", id).Delete(&File{}).Error; err != nil {
 		return err
 	}
 	return nil
 }
+
+//func UpdateFileById(f File) (err error) {
+//	if err := db.Model(&f).Update(f).Error; err != nil {
+//		return err
+//	}
+//	return nil
+//}

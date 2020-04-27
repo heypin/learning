@@ -3,7 +3,6 @@ package api
 import (
 	"github.com/gin-gonic/gin"
 	"learning/service"
-	"learning/utils"
 	"log"
 	"net/http"
 	"strconv"
@@ -22,17 +21,14 @@ func CreateNotify(c *gin.Context) {
 		log.Println(err)
 		return
 	}
-	if claims, ok := c.Get("claims"); ok {
-		s := service.NotifyService{
-			UserId:   claims.(*utils.Claims).Id,
-			CourseId: form.CourseId,
-			Title:    form.Title,
-			Content:  form.Content,
-		}
-		if _, err := s.AddNotify(); err == nil {
-			c.String(http.StatusCreated, "")
-			return
-		}
+	s := service.NotifyService{
+		CourseId: form.CourseId,
+		Title:    form.Title,
+		Content:  form.Content,
+	}
+	if _, err := s.AddNotify(); err == nil {
+		c.String(http.StatusCreated, "")
+		return
 	}
 	c.String(http.StatusInternalServerError, "")
 }

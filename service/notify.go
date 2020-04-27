@@ -7,7 +7,6 @@ import (
 
 type NotifyService struct {
 	Id       uint
-	UserId   uint
 	CourseId uint
 	Title    string
 	Content  string
@@ -15,7 +14,6 @@ type NotifyService struct {
 
 func (s *NotifyService) AddNotify() (id uint, err error) {
 	n := models.Notify{
-		UserId:   s.UserId,
 		CourseId: s.CourseId,
 		Title:    s.Title,
 		Content:  s.Content,

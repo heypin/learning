@@ -34,11 +34,8 @@ func GetClassByCourseId(id uint) ([]*Class, error) {
 func GetClassByClassCode(code string) (*Class, error) {
 	var class Class
 	err := db.Where("class_code = ?", code).First(&class).Error
-	if err != nil && err != gorm.ErrRecordNotFound {
+	if err != nil {
 		return nil, err
-	}
-	if err == gorm.ErrRecordNotFound {
-		return nil, nil
 	}
 	return &class, nil
 }

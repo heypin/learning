@@ -3,6 +3,7 @@ package api
 import (
 	"github.com/gin-gonic/gin"
 	uuid "github.com/satori/go.uuid"
+	"learning/cache"
 	"learning/conf"
 	"learning/models"
 	"learning/service"
@@ -26,7 +27,7 @@ func UserLogin(c *gin.Context) {
 			Password: form.Password,
 		}
 		if id, ok := s.Auth(); ok {
-			token, _ := utils.GenerateToken(id, s.Email, models.ROLE_USER)
+			token, _ := utils.GenerateToken(id, models.RoleUser)
 			c.JSON(http.StatusOK, gin.H{
 				"token": token,
 			})
@@ -40,25 +41,41 @@ type UserRegisterForm struct {
 	Email    string `json:"email" binding:"required,email" `
 	Password string `json:"password" binding:"required,min=8" `
 	RealName string `json:"realName" binding:"required" `
+	Captcha  string `json:"captcha" binding:"required"`
 }
 
 func UserRegister(c *gin.Context) {
 	var form UserRegisterForm
 	if err := c.ShouldBind(&form); err != nil {
-		c.JSON(http.StatusBadRequest, err)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"err": "参数错误",
+		})
+		return
+	}
+	if value, err := cache.RedisClient.Get(cache.CaptchaPrefix + "." + form.Email).Result(); err != nil {
+		c.JSON(http.StatusInternalServerError, "")
+		return
 	} else {
-		s := service.UserService{
-			Email:    form.Email,
-			Password: form.Password,
-			RealName: form.RealName,
-		}
-		if _, err := s.Register(); err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"err": "该邮箱已被注册",
+		if value != form.Captcha {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"err": "验证码错误",
 			})
-		} else {
-			c.JSON(http.StatusCreated, "")
+			return
 		}
+	}
+	s := service.UserService{
+		Email:    form.Email,
+		Password: form.Password,
+		RealName: form.RealName,
+	}
+	if _, err := s.Register(); err == nil {
+		c.String(http.StatusCreated, "")
+	} else if err == models.ErrRecordExist {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"err": "该邮箱已被注册",
+		})
+	} else {
+		c.String(http.StatusInternalServerError, "")
 	}
 }
 func GetUserByToken(c *gin.Context) {
@@ -83,10 +100,10 @@ func GetUserByToken(c *gin.Context) {
 }
 
 type UserUpdateForm struct {
-	Email    string `json:"email" binding:"required,email" `
-	RealName string `json:"realName" binding:"required" `
-	Number   string `json:"number"`
-	Sex      uint   `json:"sex" `
+	Email    string `form:"email" binding:"required,email" `
+	RealName string `form:"realName" binding:"required" `
+	Number   string `form:"number"`
+	Sex      uint   `form:"sex" `
 }
 
 func UpdateUserById(c *gin.Context) {
@@ -134,17 +151,18 @@ func UpdateUserPassword(c *gin.Context) {
 	var form UserPasswordForm
 	if err := c.ShouldBind(&form); err != nil {
 		c.JSON(http.StatusBadRequest, err)
-	} else {
-		if claims, ok := c.Get("claims"); ok {
-			s := service.UserService{
-				Id:       claims.(*utils.Claims).Id,
-				Password: form.Password,
-			}
-			if err := s.UpdateUserPassword(form.OldPassword); err == nil {
-				c.String(http.StatusOK, "")
-				return
-			}
-		}
-		c.String(http.StatusInternalServerError, "")
+		return
 	}
+	if claims, ok := c.Get("claims"); ok {
+		s := service.UserService{
+			Id:       claims.(*utils.Claims).Id,
+			Password: form.Password,
+		}
+		if err := s.UpdateUserPassword(form.OldPassword); err == nil {
+			c.String(http.StatusOK, "")
+			return
+		}
+	}
+	c.String(http.StatusInternalServerError, "")
+
 }

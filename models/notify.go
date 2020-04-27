@@ -4,7 +4,6 @@ import "github.com/jinzhu/gorm"
 
 type Notify struct {
 	gorm.Model
-	UserId   uint   `json:"userId"`
 	CourseId uint   `json:"courseId"`
 	Title    string `json:"title"`
 	Content  string `json:"content"`

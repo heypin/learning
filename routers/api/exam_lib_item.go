@@ -26,7 +26,7 @@ func CreateExamLibItemAndOptions(c *gin.Context) {
 		return
 	}
 	options := make([]*models.ExamLibItemOption, 0)
-	if form.Type == models.Subject_Single || form.Type == models.Subject_Multiple {
+	if form.Type == models.SubjectSingle || form.Type == models.SubjectMultiple {
 		for _, v := range form.Options {
 			options = append(options, &models.ExamLibItemOption{
 				Sequence: v.Sequence,
@@ -67,7 +67,7 @@ func UpdateExamLibItemAndOptions(c *gin.Context) {
 		return
 	}
 	options := make([]*models.ExamLibItemOption, 0)
-	if form.Type == models.Subject_Single || form.Type == models.Subject_Multiple {
+	if form.Type == models.SubjectSingle || form.Type == models.SubjectMultiple {
 		for _, v := range form.Options {
 			options = append(options, &models.ExamLibItemOption{
 				Sequence: v.Sequence,

@@ -61,7 +61,7 @@ func UpdateLibSubjectCountAndTotalScore(item HomeworkLibItem, tx *gorm.DB) error
 func UpdateLibItemAndOptions(item HomeworkLibItem) error {
 	err := db.Transaction(func(tx *gorm.DB) error {
 		//先删除选项再重新设置
-		if item.Type == Subject_Single || item.Type == Subject_Multiple {
+		if item.Type == SubjectSingle || item.Type == SubjectMultiple {
 			if err := tx.Where("homework_lib_item_id = ?", item.ID).
 				Delete(&HomeworkLibItemOption{}).Error; err != nil {
 				return err

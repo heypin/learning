@@ -24,22 +24,16 @@ func AddUser(u User) (id uint, err error) {
 func GetUserByEmail(email string) (*User, error) {
 	var u User
 	err := db.Where("email = ?", email).First(&u).Error
-	if err != nil && err != gorm.ErrRecordNotFound {
+	if err != nil {
 		return nil, err
-	}
-	if err == gorm.ErrRecordNotFound {
-		return nil, nil
 	}
 	return &u, nil
 }
 func GetUserById(id uint) (*User, error) {
 	var u User
 	err := db.Where("id = ?", id).First(&u).Error
-	if err != nil && err != gorm.ErrRecordNotFound {
+	if err != nil {
 		return nil, err
-	}
-	if err == gorm.ErrRecordNotFound {
-		return nil, nil
 	}
 	return &u, nil
 }

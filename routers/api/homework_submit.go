@@ -1,7 +1,6 @@
 package api
 
 import (
-	mapset "github.com/deckarep/golang-set"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	"learning/models"
@@ -10,7 +9,6 @@ import (
 	"log"
 	"net/http"
 	"strconv"
-	"strings"
 )
 
 func GetHomeworkSubmitById(c *gin.Context) {
@@ -155,10 +153,11 @@ func SubmitHomeworkWithItems(c *gin.Context) {
 			Model:             gorm.Model{ID: item.Id},
 			HomeworkLibItemId: item.HomeworkLibItemId,
 			Answer:            item.Answer,
+			Score:             new(uint),
 		})
 	}
 	if claims, ok := c.Get("claims"); ok {
-		var mark uint = 1
+		var mark uint = 1 //先假设全是客观题，已评阅
 		submitService := service.HomeworkSubmitService{
 			Id:                form.Id,
 			UserId:            claims.(*utils.Claims).Id,
@@ -171,7 +170,8 @@ func SubmitHomeworkWithItems(c *gin.Context) {
 				Id: submitItem.HomeworkLibItemId,
 			}
 			if libItem, err := s.GetHomeworkLibItemById(); err == nil && libItem != nil {
-				setScore(submitItem, libItem, &mark)
+				utils.SetMarkAndScore(libItem.Type, libItem.Answer, libItem.Score,
+					submitItem.Answer, submitItem.Score, &mark)
 				//submitService.TotalScore += submitItem.Score 不在这里计算，在数据库中计算出总分
 			}
 		}
@@ -181,42 +181,4 @@ func SubmitHomeworkWithItems(c *gin.Context) {
 		}
 	}
 	c.String(http.StatusInternalServerError, "")
-}
-func setScore(submitItem *models.HomeworkSubmitItem, libItem *models.HomeworkLibItem, mark *uint) {
-	if libItem.Type == models.Subject_Short || libItem.Type == models.Subject_Program { //如果有主观题标为未评
-		*mark = 0
-	} else if libItem.Type == models.Subject_Single ||
-		libItem.Type == models.Subject_Judgement {
-		if submitItem.Answer == libItem.Answer {
-			*submitItem.Score = libItem.Score
-		}
-	} else if libItem.Type == models.Subject_Multiple {
-		submitSet := mapset.NewSet()
-		for _, v := range strings.Split(submitItem.Answer, ",") {
-			submitSet.Add(v)
-		}
-		rightSet := mapset.NewSet()
-		for _, v := range strings.Split(libItem.Answer, ",") {
-			rightSet.Add(v)
-		}
-		if submitSet.Equal(rightSet) {
-			*submitItem.Score = libItem.Score
-		}
-	} else if libItem.Type == models.Subject_Blank {
-		rightArr := strings.Split(libItem.Answer, ",")
-		submitArr := strings.Split(submitItem.Answer, ",")
-		var length int
-		if len(submitArr) < len(rightArr) {
-			length = len(submitArr)
-		} else {
-			length = len(rightArr)
-		}
-		var rightCount int
-		for i := 0; i < length; i++ {
-			if strings.TrimSpace(submitArr[i]) == strings.TrimSpace(rightArr[i]) {
-				rightCount++
-			}
-		}
-		*submitItem.Score = uint(rightCount / len(rightArr))
-	}
 }

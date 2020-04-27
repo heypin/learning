@@ -1,14 +1,17 @@
 package main
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/360EntSecGroup-Skylar/excelize/v2"
 	mapset "github.com/deckarep/golang-set"
+	"github.com/go-redis/redis/v7"
 	"github.com/robertkrimen/otto"
+	"gopkg.in/gomail.v2"
 	"io/ioutil"
 	"learning/conf"
 	"learning/models"
+	"learning/utils"
 	"log"
 	"net/http"
 	"strings"
@@ -19,14 +22,12 @@ import (
 func TestMy(t *testing.T) {
 	conf.SetUp()
 	models.Setup()
-	submit, _ := models.GetExamSubmitById(1)
-	fmt.Println(submit)
-	arr, _ := json.Marshal(submit)
-	log.Println(string(arr))
-	log.Println(time.Time{}, time.Time{} == submit.CreatedAt)
-	//comments,_:=models.GetUserStudyClass(6)
-	//fmt.Println(comments)
+	//submits, _ := models.GetExamSubmitsByPublishId(1)
 
+}
+func TestEncrypt(t *testing.T) {
+	hashed := utils.Encrypt("12345678")
+	fmt.Println(hashed)
 }
 
 var halt = errors.New("block")
@@ -44,7 +45,7 @@ func TestJsProgram(t *testing.T) {
 		}
 		fmt.Printf("Ran code successfully: %v\n", duration)
 	}()
-	in := `var a =1;log(a+5);` //"while(true){}"
+	in := `console.log=log;console.log(1+2);` //while(true){}
 	vm := otto.New()
 	vm.Interrupt = make(chan func(), 1)
 	go func() {
@@ -63,8 +64,8 @@ func TestJsProgram(t *testing.T) {
 		logger = logger + strings.Join(outputs, " ") + "\n"
 		return otto.Value{}
 	})
-	_, err := vm.Run(in)
-	fmt.Println(logger, err)
+	vm.Run(in)
+	fmt.Println("logger", logger, "12")
 }
 
 func TestGoProgram(t *testing.T) {
@@ -99,15 +100,52 @@ func TestGo(t *testing.T) {
 	}
 	fmt.Println(rightSet.Equal(answerSet))
 }
-func TestM(t *testing.T) {
+func TestWriteExcel(t *testing.T) {
 
-	num := 12345
-	tail := 0
-	str := make([]int, 0)
-	for num != 0 {
-		tail = num % 10
-		num = (num - tail) / 10
-		str = append(str, tail)
+	f := excelize.NewFile()
+	index := f.NewSheet("Sheet1")
+	f.SetActiveSheet(index)
+	title := map[string]string{
+		"A1": "帐号",
+		"B1": "姓名",
+		"C1": "学号",
+		"D1": "总分",
+		"E1": "开考时间",
+		"F1": "完成时间",
 	}
-	fmt.Println(str)
+	for k, v := range title {
+		_ = f.SetCellValue("Sheet1", k, v)
+	}
+	err := f.SetColWidth("Sheet1", "A", "F", 20)
+	log.Println(err)
+
+	if err := f.SaveAs("../a.xlsx"); err != nil {
+		fmt.Println(err)
+	}
+}
+
+//duxmplmmtfnedhha  QQ邮箱授权码
+func TestSendMail(t *testing.T) {
+
+	m := gomail.NewMessage()
+	m.SetHeader("Subject", "[辅助学习平台]")
+	m.SetHeader("From", "2244363300@qq.com")
+	m.SetHeader("To", "2244306600@qq.com")
+	//m.SetAddressHeader("Cc", "2244306600@qq.com", "Dan")抄送
+	m.SetBody("text/html", fmt.Sprintf("你的注册验证码为<b>%s</b>，五分钟内有效", "1234"))
+	d := gomail.NewDialer("smtp.qq.com", 465, "2244363300@qq.com", "duxmplmmtfnedhha")
+
+	// Send the email to Bob, Cora and Dan.
+	if err := d.DialAndSend(m); err != nil {
+		fmt.Println(err)
+	}
+}
+func TestRedis(t *testing.T) {
+	client := redis.NewClient(&redis.Options{
+		Addr:     conf.AppConfig.Redis.Addr,
+		Password: conf.AppConfig.Redis.Password,
+		DB:       0, // use default DB
+	})
+	pong, err := client.Ping().Result()
+	fmt.Println(pong, err)
 }

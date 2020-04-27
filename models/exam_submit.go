@@ -118,7 +118,7 @@ func UpdateExamSubmitWithItems(submit ExamSubmit) error {
 					return err
 				}
 			} else {
-				if err := tx.Debug().Model(item).Update(item).Error; err != nil {
+				if err := tx.Model(item).Update(item).Error; err != nil {
 					return err
 				}
 			}

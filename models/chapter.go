@@ -4,7 +4,6 @@ import "github.com/jinzhu/gorm"
 
 type Chapter struct {
 	gorm.Model
-	UserId      uint    `json:"userId"`
 	CourseId    uint    `json:"courseId"`
 	ChapterName string  `json:"chapterName"`
 	VideoName   *string `json:"videoName"`

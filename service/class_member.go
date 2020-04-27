@@ -1,7 +1,7 @@
 package service
 
 import (
-	"errors"
+	"github.com/jinzhu/gorm"
 	"learning/models"
 )
 
@@ -19,20 +19,18 @@ func (s *ClassMemberService) GetClassesByUserId() (classes []*models.Class, err 
 	return
 }
 func (s *ClassMemberService) JoinClassByClassCode(code string) error {
-	if class, err := models.GetClassByClassCode(code); err == nil && class != nil {
-		if ok, err := models.HasJoinClass(s.UserId, class.ID); !ok && err == nil {
-			if err := models.AddClassMember(s.UserId, s.ClassId); err == nil {
+	if class, err := models.GetClassByClassCode(code); err == nil {
+		if ok, err := models.ExistClassMemberRecord(s.UserId, class.ID); ok {
+			return nil
+		} else if err == gorm.ErrRecordNotFound {
+			if err := models.AddClassMember(s.UserId, class.ID); err == nil {
 				return nil
 			} else {
 				return err
 			}
-		} else if ok {
-			return nil
 		} else {
 			return err
 		}
-	} else if err == nil && class == nil {
-		return errors.New("该班级不存在")
 	} else {
 		return err
 	}

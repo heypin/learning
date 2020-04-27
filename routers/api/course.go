@@ -11,9 +11,9 @@ import (
 )
 
 type CreateCourseForm struct {
-	Name        string `json:"name" binding:"required" `
-	Teacher     string `json:"teacher" binding:"required" `
-	Description string `json:"description" `
+	Name        string `form:"name" binding:"required" `
+	Teacher     string `form:"teacher" binding:"required" `
+	Description string `form:"description" `
 }
 
 func AddCourse(c *gin.Context) {

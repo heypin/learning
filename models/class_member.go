@@ -29,13 +29,12 @@ func GetClassesByUserId(userId uint) (classes []*Class, err error) {
 	return user.Classes, nil
 }
 
-func HasJoinClass(userId uint, classId uint) (bool, error) {
+func ExistClassMemberRecord(userId uint, classId uint) (bool, error) {
 	var classMember ClassMember
-	err := db.Where("user_id = ? AND class_id = ?", userId, classId).First(&classMember).Error
-	if err != nil && err != gorm.ErrRecordNotFound {
+	err := db.Where("user_id = ? AND class_id = ?", userId, classId).
+		First(&classMember).Error
+	if err != nil {
 		return false, err
-	} else if err == gorm.ErrRecordNotFound {
-		return false, nil
 	} else {
 		return true, nil
 	}

@@ -30,7 +30,7 @@ func CreateHomeworkLibItemAndOptions(c *gin.Context) {
 		return
 	}
 	var options []*models.HomeworkLibItemOption = nil
-	if form.Type == models.Subject_Single || form.Type == models.Subject_Multiple {
+	if form.Type == models.SubjectSingle || form.Type == models.SubjectMultiple {
 		options = []*models.HomeworkLibItemOption{}
 		for _, v := range form.Options {
 			options = append(options, &models.HomeworkLibItemOption{
@@ -72,7 +72,7 @@ func UpdateHomeworkLibItemAndOptions(c *gin.Context) {
 		return
 	}
 	var options []*models.HomeworkLibItemOption = nil
-	if form.Type == models.Subject_Single || form.Type == models.Subject_Multiple {
+	if form.Type == models.SubjectSingle || form.Type == models.SubjectMultiple {
 		options = []*models.HomeworkLibItemOption{}
 		for _, v := range form.Options {
 			options = append(options, &models.HomeworkLibItemOption{

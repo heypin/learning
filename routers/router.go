@@ -10,15 +10,19 @@ import (
 func InitRouters() *gin.Engine {
 	r := gin.Default()
 	r.Use(middleware.Cors())
+
 	r.Static("/learning", conf.AppConfig.Path.Frontend)
 	r.Static("/avatar", conf.AppConfig.Path.Avatar)
 	r.Static("/resource", conf.AppConfig.Path.File)
 	r.Static("/cover", conf.AppConfig.Path.Cover)
+
 	r.POST("/login", api.UserLogin)
 	r.POST("/register", api.UserRegister)
+	r.GET("register/code", api.GenerateRegisterCode)
 	r.GET("/video/:name", api.PlayVideo)
 	r.POST("/compile", api.ExecuteProgram)
 	r.MaxMultipartMemory = 500 << 20 //500MB
+
 	auth := r.Group("/")
 	auth.Use(middleware.JWT())
 	{
@@ -108,6 +112,8 @@ func InitRouters() *gin.Engine {
 		auth.PUT("examSubmit/finish", api.FinishExam)
 		auth.PUT("examSubmit/score", api.UpdateExamSubmitItemsScore)
 
+		auth.GET("exam/excel", api.ExportExamToExcel)
+		auth.GET("homework/excel", api.ExportHomeworkToExcel)
 	}
 	return r
 }

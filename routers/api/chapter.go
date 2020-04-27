@@ -5,7 +5,6 @@ import (
 	uuid "github.com/satori/go.uuid"
 	"learning/conf"
 	"learning/service"
-	"learning/utils"
 	"log"
 	"net/http"
 	"os"
@@ -24,16 +23,13 @@ func CreateChapter(c *gin.Context) {
 		log.Println(err)
 		return
 	}
-	if claims, ok := c.Get("claims"); ok {
-		s := service.ChapterService{
-			UserId:      claims.(*utils.Claims).Id,
-			CourseId:    form.CourseId,
-			ChapterName: form.ChapterName,
-		}
-		if _, err := s.AddChapter(); err == nil {
-			c.String(http.StatusCreated, "")
-			return
-		}
+	s := service.ChapterService{
+		CourseId:    form.CourseId,
+		ChapterName: form.ChapterName,
+	}
+	if _, err := s.AddChapter(); err == nil {
+		c.String(http.StatusCreated, "")
+		return
 	}
 	c.String(http.StatusInternalServerError, "")
 }
@@ -54,7 +50,7 @@ func GetChapterByCourseId(c *gin.Context) {
 }
 
 type UpdateChapterNameForm struct {
-	Id          uint   `json:"courseId" binding:"required" `
+	Id          uint   `json:"id" binding:"required" `
 	ChapterName string `json:"chapterName" binding:"required" `
 }
 
@@ -103,12 +99,10 @@ func DeleteChapterById(c *gin.Context) {
 
 }
 
-type UpdateChapterVideoForm struct {
-	Id uint `json:"id" binding:"required" `
-}
-
 func UpdateChapterVideo(c *gin.Context) {
-	var form UpdateChapterVideoForm
+	form := struct {
+		Id uint `form:"id" binding:"required" `
+	}{}
 	if err := c.ShouldBind(&form); err != nil {
 		c.String(http.StatusBadRequest, "")
 		log.Println(err)

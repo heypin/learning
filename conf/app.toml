@@ -1,4 +1,4 @@
-jwtSecret = "1234"
+jwtSecret = "1515"
 [database]
 url = "root:151500@(localhost)/learning?charset=utf8mb4&parseTime=True&loc=Local"
 [path]
@@ -7,3 +7,6 @@ file = "./static/resource"
 frontend = "./static/frontend"
 video = "./static/video"
 cover = "./static/cover"
+[redis]
+addr = "localhost:6379"
+password = ""

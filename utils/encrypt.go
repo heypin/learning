@@ -6,10 +6,9 @@ import (
 
 func Encrypt(password string) (pwd string) {
 	bytes, _ := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	pwd = string(bytes)
-	return
+	return string(bytes)
 }
-func CheckPassword(hashedpwd string, pwd string) bool {
-	err := bcrypt.CompareHashAndPassword([]byte(hashedpwd), []byte(pwd))
+func CheckPassword(hashedPwd string, pwd string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hashedPwd), []byte(pwd))
 	return err == nil
 }

@@ -1,7 +1,6 @@
 package api
 
 import (
-	mapset "github.com/deckarep/golang-set"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	"learning/models"
@@ -9,7 +8,6 @@ import (
 	"learning/utils"
 	"net/http"
 	"strconv"
-	"strings"
 	"time"
 )
 
@@ -203,6 +201,7 @@ func SubmitExamItem(c *gin.Context) {
 			Model:         gorm.Model{ID: item.Id},
 			ExamLibItemId: item.ExamLibItemId,
 			Answer:        item.Answer,
+			Score:         new(uint),
 		})
 	}
 	var mark uint = 1
@@ -213,7 +212,8 @@ func SubmitExamItem(c *gin.Context) {
 			Id: submitItem.ExamLibItemId,
 		}
 		if libItem, err := s.GetExamLibItemById(); err == nil && libItem != nil {
-			setExamScore(submitItem, libItem, &mark)
+			utils.SetMarkAndScore(libItem.Type, libItem.Answer, libItem.Score,
+				submitItem.Answer, submitItem.Score, &mark)
 		}
 	}
 	if err := submitService.UpdateExamSubmitWithItems(); err == nil {
@@ -221,42 +221,4 @@ func SubmitExamItem(c *gin.Context) {
 		return
 	}
 	c.String(http.StatusInternalServerError, "")
-}
-func setExamScore(submitItem *models.ExamSubmitItem, libItem *models.ExamLibItem, mark *uint) {
-	if libItem.Type == models.Subject_Short || libItem.Type == models.Subject_Program { //如果有主观题标为未评
-		*mark = 0
-	} else if libItem.Type == models.Subject_Single ||
-		libItem.Type == models.Subject_Judgement {
-		if submitItem.Answer == libItem.Answer {
-			*submitItem.Score = libItem.Score
-		}
-	} else if libItem.Type == models.Subject_Multiple {
-		submitSet := mapset.NewSet()
-		for _, v := range strings.Split(submitItem.Answer, ",") {
-			submitSet.Add(v)
-		}
-		rightSet := mapset.NewSet()
-		for _, v := range strings.Split(libItem.Answer, ",") {
-			rightSet.Add(v)
-		}
-		if submitSet.Equal(rightSet) {
-			*submitItem.Score = libItem.Score
-		}
-	} else if libItem.Type == models.Subject_Blank {
-		rightArr := strings.Split(libItem.Answer, ",")
-		submitArr := strings.Split(submitItem.Answer, ",")
-		var length int
-		if len(submitArr) < len(rightArr) {
-			length = len(submitArr)
-		} else {
-			length = len(rightArr)
-		}
-		var rightCount int
-		for i := 0; i < length; i++ {
-			if strings.TrimSpace(submitArr[i]) == strings.TrimSpace(rightArr[i]) {
-				rightCount++
-			}
-		}
-		*submitItem.Score = uint(rightCount / len(rightArr))
-	}
 }

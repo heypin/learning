@@ -1,24 +1,27 @@
 package models
 
-//var ErrRecordExist = errors.New("记录已存在")
+import "errors"
+
+var ErrRecordExist = errors.New("记录已存在")
 
 const (
-	ROLE_ADMIN = iota
-	ROLE_USER
+	RoleAdmin = iota
+	RoleUser
+)
+
+//const (
+//SEX_MALE   = 1
+//SEX_FEMALE = 2
+//)
+const (
+	//Resubmit_Deny  = 0
+	ResubmitAllow = 1
 )
 const (
-	SEX_MALE   = 1
-	SEX_FEMALE = 2
-)
-const (
-	Resubmit_Deny  = 0
-	Resubmit_Allow = 1
-)
-const (
-	Subject_Single    = "单选题"
-	Subject_Multiple  = "多选题"
-	Subject_Judgement = "判断题"
-	Subject_Blank     = "填空题"
-	Subject_Short     = "简答题"
-	Subject_Program   = "编程题"
+	SubjectSingle    = "单选题"
+	SubjectMultiple  = "多选题"
+	SubjectJudgement = "判断题"
+	SubjectBlank     = "填空题"
+	SubjectShort     = "简答题"
+	SubjectProgram   = "编程题"
 )
