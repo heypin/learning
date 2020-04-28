@@ -10,7 +10,7 @@ type ExamLibItemService struct {
 	ExamLibId uint
 	Type      string
 	Question  string
-	Answer    string
+	Answer    *string
 	Score     uint
 	Options   []*models.ExamLibItemOption
 }

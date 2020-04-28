@@ -7,7 +7,7 @@ type ExamLibItem struct {
 	ExamLibId uint                 `json:"examLibId"`
 	Type      string               `json:"type"`
 	Question  string               `json:"question"`
-	Answer    string               `json:"answer"`
+	Answer    *string              `json:"answer"`
 	Score     uint                 `json:"score"`
 	Options   []*ExamLibItemOption `json:"options" gorm:"foreignKey:exam_lib_item_id;association_foreignKey:id;"`
 }

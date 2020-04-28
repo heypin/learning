@@ -7,7 +7,7 @@ type HomeworkLibItem struct {
 	HomeworkLibId uint                     `json:"homeworkLibId"`
 	Type          string                   `json:"type"`
 	Question      string                   `json:"question"`
-	Answer        string                   `json:"answer"`
+	Answer        *string                  `json:"answer"`
 	Score         uint                     `json:"score"`
 	Options       []*HomeworkLibItemOption `json:"options" gorm:"foreignKey:homework_lib_item_id;association_foreignKey:id;"`
 }

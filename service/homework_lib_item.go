@@ -10,7 +10,7 @@ type HomeworkLibItemService struct {
 	HomeworkLibId uint
 	Type          string
 	Question      string
-	Answer        string
+	Answer        *string
 	Score         uint
 	Options       []*models.HomeworkLibItemOption
 }

@@ -17,7 +17,7 @@ type CreateLibItemForm struct {
 	HomeworkLibId uint     `json:"homeworkLibId" binding:"required"`
 	Type          string   `json:"type" binding:"required"`
 	Question      string   `json:"question" binding:"required"`
-	Answer        string   `json:"answer" binding:"required"`
+	Answer        *string  `json:"answer" binding:"required"`
 	Score         uint     `json:"score" binding:"required"`
 	Options       []Option `json:"options" `
 }
@@ -59,7 +59,7 @@ type UpdateLibItemForm struct {
 	HomeworkLibId uint     `json:"homeworkLibId" binding:"required"`
 	Type          string   `json:"type" binding:"required"`
 	Question      string   `json:"question" binding:"required"`
-	Answer        string   `json:"answer" binding:"required"`
+	Answer        *string  `json:"answer" binding:"required"`
 	Score         uint     `json:"score" binding:"required"`
 	Options       []Option `json:"options" `
 }

@@ -206,13 +206,16 @@ func SubmitExamItem(c *gin.Context) {
 	}
 	var mark uint = 1
 	submitService.Mark = &mark
+	if len(form.SubmitItems) == 1 { //如果只有一道题，代表是保存，而不是提交试卷,始终为0标为未批阅
+		submitService.Mark = new(uint)
+	}
 	submitService.SubmitItems = submitItems
 	for _, submitItem := range submitService.SubmitItems {
 		s := service.ExamLibItemService{
 			Id: submitItem.ExamLibItemId,
 		}
 		if libItem, err := s.GetExamLibItemById(); err == nil && libItem != nil {
-			utils.SetMarkAndScore(libItem.Type, libItem.Answer, libItem.Score,
+			utils.SetMarkAndScore(libItem.Type, *libItem.Answer, libItem.Score,
 				submitItem.Answer, submitItem.Score, &mark)
 		}
 	}

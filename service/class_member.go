@@ -1,7 +1,6 @@
 package service
 
 import (
-	"github.com/jinzhu/gorm"
 	"learning/models"
 )
 
@@ -22,7 +21,7 @@ func (s *ClassMemberService) JoinClassByClassCode(code string) error {
 	if class, err := models.GetClassByClassCode(code); err == nil {
 		if ok, err := models.ExistClassMemberRecord(s.UserId, class.ID); ok {
 			return nil
-		} else if err == gorm.ErrRecordNotFound {
+		} else if err == nil {
 			if err := models.AddClassMember(s.UserId, class.ID); err == nil {
 				return nil
 			} else {

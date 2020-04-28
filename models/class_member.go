@@ -33,8 +33,10 @@ func ExistClassMemberRecord(userId uint, classId uint) (bool, error) {
 	var classMember ClassMember
 	err := db.Where("user_id = ? AND class_id = ?", userId, classId).
 		First(&classMember).Error
-	if err != nil {
+	if err != nil && err != gorm.ErrRecordNotFound {
 		return false, err
+	} else if err == gorm.ErrRecordNotFound {
+		return false, nil
 	} else {
 		return true, nil
 	}

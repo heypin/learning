@@ -79,7 +79,7 @@ func GetHomeworkLibWithItemsById(c *gin.Context) {
 	if lib, err := s.GetHomeworkLibWithItemsById(); err == nil {
 		if c.Query("answer") == "" {
 			for _, v := range lib.Items { //获取作业题目信息时不把正确答案返回
-				v.Answer = ""
+				v.Answer = new(string)
 			}
 		}
 		c.JSON(http.StatusOK, lib)

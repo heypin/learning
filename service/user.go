@@ -18,8 +18,8 @@ type UserService struct {
 }
 
 func (s *UserService) Auth() (uint, bool) {
-	user, err := models.GetUserByEmail(s.Email)
-	if err == nil && utils.CheckPassword(user.Password, s.Password) {
+	user, _ := models.GetUserByEmail(s.Email)
+	if user != nil && utils.CheckPassword(user.Password, s.Password) {
 		return user.ID, true
 	}
 	return 0, false
@@ -44,23 +44,17 @@ func (s *UserService) Register() (uint, error) {
 	}
 }
 
-func (s *UserService) GetUserByEmail() (*models.User, error) {
-	user, err := models.GetUserByEmail(s.Email)
-	if err != nil {
-		return nil, err
-	}
-	return user, nil
+func (s *UserService) GetUserByEmail() (user *models.User, err error) {
+	user, err = models.GetUserByEmail(s.Email)
+	return
 }
-func (s *UserService) GetUserById() (*models.User, error) {
-	user, err := models.GetUserById(s.Id)
-	if err != nil {
-		return nil, err
-	}
-	return user, nil
+func (s *UserService) GetUserById() (user *models.User, err error) {
+	user, err = models.GetUserById(s.Id)
+	return
 }
 func (s *UserService) UpdateUserPassword(oldPassword string) error {
-	result, err := models.GetUserById(s.Id)
-	if err != nil || !utils.CheckPassword(result.Password, oldPassword) {
+	result, _ := models.GetUserById(s.Id)
+	if result == nil || !utils.CheckPassword(result.Password, oldPassword) {
 		return errors.New("修改失败")
 	}
 	user := models.User{

@@ -8,9 +8,9 @@ import (
 )
 
 func InitRouters() *gin.Engine {
+	gin.SetMode(gin.ReleaseMode)
 	r := gin.Default()
 	r.Use(middleware.Cors())
-
 	r.Static("/learning", conf.AppConfig.Path.Frontend)
 	r.Static("/avatar", conf.AppConfig.Path.Avatar)
 	r.Static("/resource", conf.AppConfig.Path.File)

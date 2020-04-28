@@ -24,16 +24,22 @@ func AddUser(u User) (id uint, err error) {
 func GetUserByEmail(email string) (*User, error) {
 	var u User
 	err := db.Where("email = ?", email).First(&u).Error
-	if err != nil {
+	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, err
+	}
+	if err == gorm.ErrRecordNotFound {
+		return nil, nil
 	}
 	return &u, nil
 }
 func GetUserById(id uint) (*User, error) {
 	var u User
 	err := db.Where("id = ?", id).First(&u).Error
-	if err != nil {
+	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, err
+	}
+	if err == gorm.ErrRecordNotFound {
+		return nil, nil
 	}
 	return &u, nil
 }
@@ -43,9 +49,10 @@ func UpdateUserById(u User) (err error) {
 	}
 	return nil
 }
-func DeleteUserById(id uint) (err error) {
-	if err = db.Where("id = ?", id).Delete(&User{}).Error; err != nil {
-		return err
-	}
-	return nil
-}
+
+//func DeleteUserById(id uint) (err error) {
+//	if err = db.Where("id = ?", id).Delete(&User{}).Error; err != nil {
+//		return err
+//	}
+//	return nil
+//}

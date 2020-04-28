@@ -39,9 +39,10 @@ func GetClassByClassCode(code string) (*Class, error) {
 	}
 	return &class, nil
 }
-func DeleteClassById(id uint) (err error) {
-	if err = db.Where("id = ?", id).Delete(&Class{}).Error; err != nil {
-		return err
-	}
-	return nil
-}
+
+//func DeleteClassById(id uint) (err error) {
+//	if err = db.Where("id = ?", id).Delete(&Class{}).Error; err != nil {
+//		return err
+//	}
+//	return nil
+//}

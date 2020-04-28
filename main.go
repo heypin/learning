@@ -13,8 +13,8 @@ func main() {
 	models.Setup()
 	cache.SetUp()
 	r := routers.InitRouters()
-	if err := r.Run(":8080"); err != nil {
-		log.Println("启动失败")
+	if err := r.Run(conf.AppConfig.Port); err != nil {
+		log.Println("启动失败", err)
 	}
 
 }

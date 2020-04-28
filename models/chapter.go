@@ -41,7 +41,6 @@ func DeleteChapterById(id uint) (err error) {
 	return nil
 }
 func UpdateChapterById(c Chapter) (err error) {
-
 	if err = db.Model(&c).Update(c).Error; err != nil {
 		return err
 	}

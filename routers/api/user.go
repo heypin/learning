@@ -53,6 +53,7 @@ func UserRegister(c *gin.Context) {
 		return
 	}
 	if value, err := cache.RedisClient.Get(cache.CaptchaPrefix + "." + form.Email).Result(); err != nil {
+		log.Println(err)
 		c.JSON(http.StatusInternalServerError, "")
 		return
 	} else {
@@ -70,11 +71,13 @@ func UserRegister(c *gin.Context) {
 	}
 	if _, err := s.Register(); err == nil {
 		c.String(http.StatusCreated, "")
+
 	} else if err == models.ErrRecordExist {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"err": "该邮箱已被注册",
 		})
 	} else {
+		log.Println(err)
 		c.String(http.StatusInternalServerError, "")
 	}
 }
@@ -83,8 +86,8 @@ func GetUserByToken(c *gin.Context) {
 		s := service.UserService{
 			Id: claims.(*utils.Claims).Id,
 		}
-		user, err := s.GetUserById()
-		if err == nil && user != nil {
+		user, _ := s.GetUserById()
+		if user != nil {
 			c.JSON(http.StatusOK, gin.H{
 				"id":       user.ID,
 				"email":    user.Email,

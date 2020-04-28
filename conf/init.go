@@ -22,6 +22,7 @@ type redis struct {
 }
 type Config struct {
 	JwtSecret string
+	Port      string
 	DB        database `toml:"database"`
 	Path      path
 	Redis     redis

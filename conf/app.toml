@@ -1,4 +1,5 @@
 jwtSecret = "1515"
+port = ":8081"  #app运行端口
 [database]
 url = "root:151500@(localhost)/learning?charset=utf8mb4&parseTime=True&loc=Local"
 [path]

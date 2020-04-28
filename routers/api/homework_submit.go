@@ -170,7 +170,7 @@ func SubmitHomeworkWithItems(c *gin.Context) {
 				Id: submitItem.HomeworkLibItemId,
 			}
 			if libItem, err := s.GetHomeworkLibItemById(); err == nil && libItem != nil {
-				utils.SetMarkAndScore(libItem.Type, libItem.Answer, libItem.Score,
+				utils.SetMarkAndScore(libItem.Type, *libItem.Answer, libItem.Score,
 					submitItem.Answer, submitItem.Score, &mark)
 				//submitService.TotalScore += submitItem.Score 不在这里计算，在数据库中计算出总分
 			}

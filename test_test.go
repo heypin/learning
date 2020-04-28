@@ -27,6 +27,7 @@ func TestMy(t *testing.T) {
 }
 func TestEncrypt(t *testing.T) {
 	hashed := utils.Encrypt("12345678")
+	utils.CheckPassword(hashed, "12345678")
 	fmt.Println(hashed)
 }
 
@@ -56,7 +57,7 @@ func TestJsProgram(t *testing.T) {
 	}()
 
 	var logger string
-	vm.Set("log", func(call otto.FunctionCall) otto.Value {
+	_ = vm.Set("log", func(call otto.FunctionCall) otto.Value {
 		outputs := make([]string, 0)
 		for _, arg := range call.ArgumentList {
 			outputs = append(outputs, arg.String())
@@ -64,7 +65,7 @@ func TestJsProgram(t *testing.T) {
 		logger = logger + strings.Join(outputs, " ") + "\n"
 		return otto.Value{}
 	})
-	vm.Run(in)
+	_, _ = vm.Run(in)
 	fmt.Println("logger", logger, "12")
 }
 
@@ -80,7 +81,9 @@ func TestGoProgram(t *testing.T) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		fmt.Println(err)

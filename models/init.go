@@ -12,7 +12,6 @@ var db *gorm.DB
 func Setup() {
 	var err error
 	db, err = gorm.Open("mysql", conf.AppConfig.DB.Url)
-
 	if err != nil {
 		log.Fatalf("models.Setup err: %v", err)
 	}
@@ -20,7 +19,6 @@ func Setup() {
 	//gorm.DefaultTableNameHandler = func(db *gorm.DB, defaultTableName string) string {
 	//	return setting.DatabaseSetting.TablePrefix + defaultTableName
 	//}
-
 	db.DB().SetMaxIdleConns(10)
 	db.DB().SetMaxOpenConns(100)
 	//db.AutoMigrate(&ExamLib{},&ExamLibItem{},&ExamLibItemOption{},&ExamPublish{},&ExamSubmit{})

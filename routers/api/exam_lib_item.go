@@ -13,7 +13,7 @@ type CreateExamLibItemForm struct {
 	ExamLibId uint     `json:"examLibId" binding:"required"`
 	Type      string   `json:"type" binding:"required"`
 	Question  string   `json:"question" binding:"required"`
-	Answer    string   `json:"answer" binding:"required"`
+	Answer    *string  `json:"answer" binding:"required"`
 	Score     uint     `json:"score" binding:"required"`
 	Options   []Option `json:"options" `
 }
@@ -54,7 +54,7 @@ type UpdateExamLibItemForm struct {
 	ExamLibId uint     `json:"examLibId" binding:"required"`
 	Type      string   `json:"type" binding:"required"`
 	Question  string   `json:"question" binding:"required"`
-	Answer    string   `json:"answer" binding:"required"`
+	Answer    *string  `json:"answer" binding:"required"`
 	Score     uint     `json:"score" binding:"required"`
 	Options   []Option `json:"options" `
 }
