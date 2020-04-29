@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"learning/cache"
 	"learning/conf"
+	"learning/models"
 	"learning/service"
 	"learning/utils"
 	"log"
@@ -33,6 +34,13 @@ func PlayVideo(c *gin.Context) {
 	}
 	c.Header("Content-Type", "video/mp4")
 	http.ServeContent(c.Writer, c.Request, "", time.Now(), video)
+}
+func DownloadExcelExample(c *gin.Context) {
+	filename := url.QueryEscape("example.xlsx")
+	filepath := "./static/example/example.xlsx"
+	c.Header("Content-Type", "application/octet-stream")
+	c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", filename))
+	c.File(filepath)
 }
 
 type ExecuteProgramForm struct {
@@ -176,5 +184,73 @@ func GenerateRegisterCode(c *gin.Context) {
 	if err := utils.SendEmail(form.Email, registerCode); err != nil {
 		c.String(http.StatusInternalServerError, "")
 		return
+	}
+}
+
+type ImportSubjectForm struct {
+	LibId uint   `form:"libId" binding:"required"`
+	Type  string `form:"type" binding:"required"` //是试题库还是作业库
+}
+
+func ImportExcelSubjectToLib(c *gin.Context) {
+	var form ImportSubjectForm
+	if err := c.ShouldBind(&form); err != nil {
+		c.String(http.StatusBadRequest, "")
+		return
+	}
+	if fileHeader, err := c.FormFile("excel"); err == nil {
+		if file, err := fileHeader.Open(); err == nil {
+			if subjects, err := utils.ReadExcelToSubject(file); err == nil {
+				for _, subject := range subjects {
+					if form.Type == "exam" {
+						itemService := service.ExamLibItemService{
+							ExamLibId: form.LibId,
+							Type:      subject.Type,
+							Question:  subject.Question,
+							Answer:    &subject.Answer,
+							Score:     subject.Score,
+						}
+						if subject.Options != nil {
+							for _, option := range subject.Options {
+								itemService.Options = append(itemService.Options, &models.ExamLibItemOption{
+									Sequence: option.Sequence,
+									Content:  option.Content,
+								})
+							}
+						}
+						_, _ = itemService.CreateExamLibItemAndOptions()
+					} else if form.Type == "homework" {
+						itemService := service.HomeworkLibItemService{
+							HomeworkLibId: form.LibId,
+							Type:          subject.Type,
+							Question:      subject.Question,
+							Answer:        &subject.Answer,
+							Score:         subject.Score,
+						}
+						if subject.Options != nil {
+							for _, option := range subject.Options {
+								itemService.Options = append(itemService.Options, &models.HomeworkLibItemOption{
+									Sequence: option.Sequence,
+									Content:  option.Content,
+								})
+							}
+						}
+						_, _ = itemService.CreateLibItemAndOptions()
+					}
+				}
+			} else {
+				c.JSON(http.StatusInternalServerError, gin.H{
+					"err": "读取题目失败",
+				})
+			}
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"err": "文件打开失败",
+			})
+		}
+	} else {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"err": "文件获取失败",
+		})
 	}
 }

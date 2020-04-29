@@ -8,7 +8,24 @@ import (
 	"learning/utils"
 	"log"
 	"net/http"
+	"strconv"
 )
+
+func GetCourseById(c *gin.Context) {
+	id, err := strconv.Atoi(c.Query("id"))
+	if err != nil || id <= 0 {
+		c.String(http.StatusBadRequest, "")
+		return
+	}
+	s := service.CourseService{
+		Id: uint(id),
+	}
+	if course, err := s.GetCourseById(); err == nil {
+		c.JSON(http.StatusOK, course)
+	} else {
+		c.JSON(http.StatusInternalServerError, "")
+	}
+}
 
 type CreateCourseForm struct {
 	Name        string `form:"name" binding:"required" `

@@ -8,7 +8,7 @@ import (
 )
 
 func InitRouters() *gin.Engine {
-	gin.SetMode(gin.ReleaseMode)
+	//gin.SetMode(gin.ReleaseMode)
 	r := gin.Default()
 	r.Use(middleware.Cors())
 	r.Static("/learning", conf.AppConfig.Path.Frontend)
@@ -16,6 +16,7 @@ func InitRouters() *gin.Engine {
 	r.Static("/resource", conf.AppConfig.Path.File)
 	r.Static("/cover", conf.AppConfig.Path.Cover)
 
+	r.GET("/excel/example", api.DownloadExcelExample)
 	r.POST("/login", api.UserLogin)
 	r.POST("/register", api.UserRegister)
 	r.GET("register/code", api.GenerateRegisterCode)
@@ -30,6 +31,7 @@ func InitRouters() *gin.Engine {
 		auth.PUT("user", api.UpdateUserById)
 		auth.PUT("user/password", api.UpdateUserPassword)
 
+		auth.GET("course", api.GetCourseById)
 		auth.POST("course", api.AddCourse)
 		auth.GET("course/teach", api.GetUserTeachCourse)
 
@@ -114,6 +116,7 @@ func InitRouters() *gin.Engine {
 
 		auth.GET("exam/excel", api.ExportExamToExcel)
 		auth.GET("homework/excel", api.ExportHomeworkToExcel)
+		auth.POST("excel/lib", api.ImportExcelSubjectToLib)
 	}
 	return r
 }

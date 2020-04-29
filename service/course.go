@@ -33,3 +33,6 @@ func (s *CourseService) GetCourseByUserId() ([]*models.Course, error) {
 	}
 	return courses, nil
 }
+func (s *CourseService) GetCourseById() (course *models.Course, err error) {
+	return models.GetCourseById(s.Id)
+}

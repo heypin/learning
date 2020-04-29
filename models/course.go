@@ -11,6 +11,17 @@ type Course struct {
 	Description string `json:"description"`
 }
 
+func GetCourseById(id uint) (*Course, error) {
+	var c Course
+	err := db.Where("id = ?", id).First(&c).Error
+	if err != nil && err != gorm.ErrRecordNotFound {
+		return nil, err
+	}
+	if err == gorm.ErrRecordNotFound {
+		return nil, nil
+	}
+	return &c, nil
+}
 func AddCourse(c Course) (id uint, err error) {
 	if err := db.Create(&c).Error; err != nil {
 		return 0, err
@@ -26,9 +37,9 @@ func GetCourseByUserId(id uint) ([]*Course, error) {
 	return c, nil
 }
 
-func DeleteCourseById(id uint) (err error) {
-	if err = db.Where("id = ?", id).Delete(&Course{}).Error; err != nil {
-		return err
-	}
-	return nil
-}
+//func DeleteCourseById(id uint) (err error) {
+//	if err = db.Where("id = ?", id).Delete(&Course{}).Error; err != nil {
+//		return err
+//	}
+//	return nil
+//}

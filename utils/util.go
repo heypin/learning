@@ -1,102 +1,24 @@
 package utils
 
 import (
-	"errors"
 	"fmt"
+	"github.com/360EntSecGroup-Skylar/excelize/v2"
 	mapset "github.com/deckarep/golang-set"
-	"github.com/robertkrimen/otto"
-	"github.com/tidwall/gjson"
 	"gopkg.in/gomail.v2"
-	"io/ioutil"
+	"io"
 	"learning/models"
-	"log"
 	"math/rand"
-	"net/http"
-	"net/url"
+	"strconv"
 	"strings"
 	"time"
 )
 
-func GenerateClassCode(id uint) string {
+func GenerateClassCode(id uint) string { //生成班级码
 	rand.Seed(time.Now().UnixNano())
 	random := rand.Intn(1<<16 - 1)
 	return fmt.Sprintf("%04X%02X", random, id)
 }
-func ExecuteGoProgram(in string) (out string, err error) {
-	response, err := http.PostForm("https://golang.google.cn/compile",
-		url.Values{"body": []string{in}})
-	if err != nil {
-		return "", err
-	}
-	defer func() {
-		if err := response.Body.Close(); err != nil {
-			log.Println(err)
-		}
-	}()
-	body, err := ioutil.ReadAll(response.Body)
-	if err != nil {
-		return "", err
-	}
-	out = string(body)
-	compileErrors := gjson.Get(out, "compile_errors").String()
-	output := gjson.Get(out, "output").String()
-	if compileErrors != "" {
-		out = "编译错误:" + compileErrors
-	} else {
-		out = output
-	}
-	return out, nil
-}
-func ExecuteJsProgram(in string) (out string, err error) {
-	var halt = errors.New("block")
-	start := time.Now()
-	defer func() {
-		duration := time.Since(start)
-		if caught := recover(); caught != nil {
-			if caught == halt {
-				fmt.Printf("Some code took to long! Stopping after: %v\n", duration)
-				return
-			}
-			panic(caught) // Something else happened, repanic!
-		}
-	}()
-	vm := otto.New()
-	vm.Interrupt = make(chan func(), 1)
-	go func() {
-		time.Sleep(2 * time.Second) // 只运行2秒，防止无限循环
-		vm.Interrupt <- func() {
-			panic(halt)
-		}
-	}()
 
-	var logger string
-	err = vm.Set("log", func(call otto.FunctionCall) otto.Value {
-		outputs := make([]string, 0)
-		for _, arg := range call.ArgumentList {
-			outputs = append(outputs, arg.String())
-		}
-		logger = logger + strings.Join(outputs, " ") + "\n"
-		return otto.Value{}
-	})
-	if err != nil {
-		return "", err
-	}
-	in = "console.log=log;\n" + in //重载console.log为上一步的log函数,保存控制台输出
-	_, err = vm.Run(in)
-	if err != nil {
-		return err.Error(), nil
-	}
-	return logger, nil
-}
-func ExecuteProgramSubject(language string, in string) (out string, err error) {
-	language = strings.ToLower(language)
-	if language == "javascript" || language == "js" {
-		return ExecuteJsProgram(in)
-	} else if language == "golang" || language == "go" {
-		return ExecuteGoProgram(in)
-	}
-	return "", errors.New("unsupported language")
-}
 func SendEmail(to string, code string) error {
 	m := gomail.NewMessage()
 	m.SetHeader("Subject", "[辅助学习平台]")
@@ -146,4 +68,69 @@ func SetMarkAndScore(subjectType string, rightAnswer string, totalScore uint, us
 		}
 		*userScore = uint(float32(rightCount) / float32(len(rightArr)) * float32(totalScore))
 	}
+}
+
+type Option struct {
+	Sequence string
+	Content  string
+}
+type Subject struct {
+	Type     string
+	Question string
+	Answer   string
+	Score    uint
+	Options  []Option
+}
+
+func isSupportSubjectType(subjectType string) bool {
+	set := mapset.NewSet()
+	set.Add(models.SubjectSingle)
+	set.Add(models.SubjectMultiple)
+	set.Add(models.SubjectJudgement)
+	set.Add(models.SubjectBlank)
+	set.Add(models.SubjectShort)
+	set.Add(models.SubjectProgram)
+	return set.Contains(subjectType)
+}
+func ReadExcelToSubject(reader io.Reader) ([]Subject, error) {
+	f, err := excelize.OpenReader(reader)
+	if err != nil {
+		return nil, err
+	}
+	rows, err := f.GetRows("Sheet1")
+	if err != nil {
+		return nil, err
+	}
+	subjects := make([]Subject, 0)
+	for index, row := range rows {
+		if index == 0 { //跳过题目行
+			continue
+		}
+		var item Subject
+		subjectType := strings.TrimSpace(row[0])
+		if !isSupportSubjectType(subjectType) { //跳过不支持的题目类型
+			continue
+		}
+		item.Type = subjectType
+		item.Question = row[1]
+		item.Answer = strings.TrimSpace(row[2])
+		if score, err := strconv.Atoi(strings.TrimSpace(row[3])); err != nil {
+			continue
+		} else {
+			item.Score = uint(score)
+		}
+		if subjectType == models.SubjectSingle ||
+			subjectType == models.SubjectMultiple {
+			item.Answer = strings.ToUpper(item.Answer)
+			item.Options = make([]Option, 0)
+			for i := 4; i < len(row); i++ {
+				item.Options = append(item.Options, Option{
+					Sequence: string([]byte{byte(65 - 4 + i)}), //65转为字符串为A,66为B
+					Content:  row[i],
+				})
+			}
+		}
+		subjects = append(subjects, item)
+	}
+	return subjects, nil
 }
