@@ -8,18 +8,20 @@ import (
 )
 
 func InitRouters() *gin.Engine {
-	//gin.SetMode(gin.ReleaseMode)
+	gin.SetMode(gin.ReleaseMode)
 	r := gin.Default()
 	r.Use(middleware.Cors())
-	r.Static("/learning", conf.AppConfig.Path.Frontend)
-	r.Static("/avatar", conf.AppConfig.Path.Avatar)
-	r.Static("/resource", conf.AppConfig.Path.File)
-	r.Static("/cover", conf.AppConfig.Path.Cover)
+	path := conf.AppConfig.Path
+	r.Static("/learning", path.Frontend)
+	r.Static("/avatar", path.Avatar)
+	r.Static("/resource", path.File)
+	r.Static("/cover", path.Cover)
 
 	r.GET("/excel/example", api.DownloadExcelExample)
 	r.POST("/login", api.UserLogin)
 	r.POST("/register", api.UserRegister)
-	r.GET("register/code", api.GenerateRegisterCode)
+	r.PUT("/forget-password", api.UserForgetPassword)
+	r.GET("/captcha", api.GenerateCaptcha)
 	r.GET("/video/:name", api.PlayVideo)
 	r.POST("/compile", api.ExecuteProgram)
 	r.MaxMultipartMemory = 500 << 20 //500MB
@@ -114,9 +116,10 @@ func InitRouters() *gin.Engine {
 		auth.PUT("examSubmit/finish", api.FinishExam)
 		auth.PUT("examSubmit/score", api.UpdateExamSubmitItemsScore)
 
-		auth.GET("exam/excel", api.ExportExamToExcel)
-		auth.GET("homework/excel", api.ExportHomeworkToExcel)
-		auth.POST("excel/lib", api.ImportExcelSubjectToLib)
+		auth.GET("excel/exportExamSubmit", api.ExportExamSubmitToExcel)
+		auth.GET("excel/exportHomeworkSubmit", api.ExportHomeworkSubmitToExcel)
+		auth.POST("excel/importLib", api.ImportExcelSubjectToLib)
+		auth.GET("excel/exportLib", api.ExportLibSubjectToExcel)
 	}
 	return r
 }

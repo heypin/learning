@@ -6,6 +6,7 @@ import (
 	mapset "github.com/deckarep/golang-set"
 	"gopkg.in/gomail.v2"
 	"io"
+	"learning/conf"
 	"learning/models"
 	"math/rand"
 	"strconv"
@@ -19,14 +20,16 @@ func GenerateClassCode(id uint) string { //生成班级码
 	return fmt.Sprintf("%04X%02X", random, id)
 }
 
-func SendEmail(to string, code string) error {
+//发送邮件
+func SendEmail(to string, content string) error {
+	email := conf.AppConfig.Email
 	m := gomail.NewMessage()
 	m.SetHeader("Subject", "[辅助学习平台]")
-	m.SetHeader("From", "2244363300@qq.com")
+	m.SetHeader("From", email.Username)
 	m.SetHeader("To", to)
-	//m.SetAddressHeader("Cc", "2244306600@qq.com", "Dan")抄送
-	m.SetBody("text/html", fmt.Sprintf("你的注册验证码为<b>%s</b>，五分钟内有效", code))
-	d := gomail.NewDialer("smtp.qq.com", 465, "2244363300@qq.com", "duxmplmmtfnedhha")
+	m.SetBody("text/html", content)
+	d := gomail.NewDialer(email.Host, email.Port,
+		email.Username, email.Password)
 	if err := d.DialAndSend(m); err != nil {
 		return err
 	}

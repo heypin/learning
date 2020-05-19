@@ -4,11 +4,6 @@ import "errors"
 
 var ErrRecordExist = errors.New("记录已存在")
 
-const (
-	RoleAdmin = iota
-	RoleUser
-)
-
 //const (
 //SEX_MALE   = 1
 //SEX_FEMALE = 2

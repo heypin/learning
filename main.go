@@ -16,5 +16,4 @@ func main() {
 	if err := r.Run(conf.AppConfig.Port); err != nil {
 		log.Println("启动失败", err)
 	}
-
 }

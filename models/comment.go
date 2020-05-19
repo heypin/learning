@@ -2,7 +2,6 @@ package models
 
 import (
 	"github.com/jinzhu/gorm"
-	"log"
 )
 
 type Comment struct {
@@ -25,7 +24,6 @@ func GetCommentByCourseId(courseId uint) ([]*Comment, error) {
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return nil, err
 	}
-	log.Println(len(comments))
 	return comments, nil
 }
 func GetCommentByUserId(userId uint, courseId uint) ([]*Comment, error) {

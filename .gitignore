@@ -3,6 +3,7 @@
 *.iws
 *.iml
 *.ipr
+#资源目录
 /static/avatar/
 /static/video/
 /static/resource/

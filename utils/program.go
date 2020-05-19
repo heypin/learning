@@ -61,18 +61,19 @@ func ExecuteJsProgram(in string) (out string, err error) {
 	}()
 
 	var logger string
+	//自定义js中的log函数执行结果
 	err = vm.Set("log", func(call otto.FunctionCall) otto.Value {
 		outputs := make([]string, 0)
-		for _, arg := range call.ArgumentList {
+		for _, arg := range call.ArgumentList { //获取js中log函数的参数执行结果并保存
 			outputs = append(outputs, arg.String())
 		}
 		logger = logger + strings.Join(outputs, " ") + "\n"
-		return otto.Value{}
+		return otto.Value{} //返回otto.Value{}代表不改变js中的结果
 	})
 	if err != nil {
 		return "", err
 	}
-	in = "console.log=log;\n" + in //重载console.log为上一步的log函数,保存控制台输出
+	in = "console.log=log;\n" + in //重载console.log为上一步的log函数,用于保存控制台输出
 	_, err = vm.Run(in)
 	if err != nil {
 		return err.Error(), nil

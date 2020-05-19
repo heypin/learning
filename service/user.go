@@ -19,8 +19,11 @@ type UserService struct {
 
 func (s *UserService) Auth() (uint, bool) {
 	user, _ := models.GetUserByEmail(s.Email)
-	if user != nil && utils.CheckPassword(user.Password, s.Password) {
-		return user.ID, true
+	if user != nil {
+		if utils.CheckPassword(user.Password, s.Password) {
+			return user.ID, true
+		}
+		return user.ID, false
 	}
 	return 0, false
 }
@@ -57,6 +60,16 @@ func (s *UserService) UpdateUserPassword(oldPassword string) error {
 	if result == nil || !utils.CheckPassword(result.Password, oldPassword) {
 		return errors.New("修改失败")
 	}
+	user := models.User{
+		Model:    gorm.Model{ID: s.Id},
+		Password: utils.Encrypt(s.Password),
+	}
+	if err := models.UpdateUserById(user); err != nil {
+		return err
+	}
+	return nil
+}
+func (s *UserService) ForgetUserPassword() error {
 	user := models.User{
 		Model:    gorm.Model{ID: s.Id},
 		Password: utils.Encrypt(s.Password),

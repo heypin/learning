@@ -1,5 +1,10 @@
 jwtSecret = "1515"
 port = ":8081"  #app运行端口
+[email]
+host = "smtp.qq.com" #发送邮件时使用qq邮箱发送
+port = 465 #登录邮箱的端口
+username = "2244363300@qq.com" #使用的QQ邮箱
+password = "duxmplmmtfnedhha" #邮箱密码，QQ邮箱使用授权码
 [database]
 url = "root:151500@(localhost)/learning?charset=utf8mb4&parseTime=True&loc=Local"
 [path]

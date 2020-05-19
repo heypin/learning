@@ -9,6 +9,12 @@ import (
 type database struct {
 	Url string
 }
+type email struct {
+	Host     string
+	Port     int
+	Username string
+	Password string
+}
 type path struct {
 	Avatar   string
 	File     string
@@ -23,6 +29,7 @@ type redis struct {
 type Config struct {
 	JwtSecret string
 	Port      string
+	Email     email
 	DB        database `toml:"database"`
 	Path      path
 	Redis     redis
