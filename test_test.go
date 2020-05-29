@@ -1,12 +1,14 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	mapset "github.com/deckarep/golang-set"
 	"github.com/robertkrimen/otto"
 	"gopkg.in/gomail.v2"
 	"io/ioutil"
+	"learning/cache"
 	"learning/conf"
 	"learning/models"
 	"log"
@@ -18,10 +20,22 @@ import (
 	"time"
 )
 
+type Student struct {
+	Name string `json:"name"`
+}
+
+func TestG(t *testing.T) {
+
+}
 func TestMy(t *testing.T) {
 	conf.SetUp()
 	models.Setup()
-	//submits, _ := models.GetExamSubmitsByPublishId(1)
+	cache.SetUp()
+	a := []Student{{Name: "1"}, {Name: "2"}}
+	b, _ := json.Marshal(a)
+	err1 := cache.RedisClient.Set("test", string(b), time.Minute*1).Err()
+	value, err := cache.RedisClient.Get("test").Result()
+	fmt.Println(value, err1, err)
 }
 func TestShellGoProgram(t *testing.T) { //用cmd控制台命令行执行go程序
 	cmd := exec.Command("cmd", "/c", "go run ./http/main.go")

@@ -15,6 +15,17 @@ func AddNotify(n Notify) (id uint, err error) {
 	}
 	return n.ID, nil
 }
+func GetNotifyById(id uint) (*Notify, error) {
+	var notify Notify
+	err := db.Where("id = ?", id).First(&notify).Error
+	if err != nil && err != gorm.ErrRecordNotFound {
+		return nil, err
+	}
+	if err == gorm.ErrRecordNotFound {
+		return nil, nil
+	}
+	return &notify, err
+}
 func GetNotifyByCourseId(courseId uint) ([]*Notify, error) {
 	var notifies []*Notify
 	err := db.Where("course_id = ?", courseId).Find(&notifies).Error

@@ -17,4 +17,5 @@ func SetUp() {
 
 const (
 	CaptchaPrefix = "captcha"
+	NotifyPrefix  = "notify"
 )
